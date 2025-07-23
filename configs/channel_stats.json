@@ -1,8 +1,31 @@
 {
-  "timestamp": "2025-07-23T05:45:00.983124+00:00",
+  "timestamp": "2025-07-23T05:59:29.464103+00:00",
   "channels": [
     {
       "url": "https://t.me/s/NamiraNet",
+      "enabled": false,
+      "metrics": {
+        "total_configs": 0,
+        "valid_configs": 0,
+        "unique_configs": 0,
+        "avg_response_time": 0,
+        "success_count": 0,
+        "fail_count": 1,
+        "overall_score": 15.0,
+        "last_success": null,
+        "protocol_counts": {
+          "wireguard://": 0,
+          "hysteria2://": 0,
+          "vless://": 0,
+          "vmess://": 0,
+          "ss://": 0,
+          "trojan://": 0,
+          "tuic://": 0
+        }
+      }
+    },
+    {
+      "url": "https://www.namira.dev/api/subscription",
       "enabled": false,
       "metrics": {
         "total_configs": 0,
