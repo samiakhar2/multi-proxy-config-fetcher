@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-23T05:59:29.464103+00:00",
+  "timestamp": "2025-07-23T09:56:58.132607+00:00",
   "channels": [
     {
       "url": "https://t.me/s/NamiraNet",
@@ -20,6 +20,29 @@
           "vmess://": 0,
           "ss://": 0,
           "trojan://": 0,
+          "tuic://": 0
+        }
+      }
+    },
+    {
+      "url": "https://t.me/s/ShadowProxy66",
+      "enabled": true,
+      "metrics": {
+        "total_configs": 62,
+        "valid_configs": 50,
+        "unique_configs": 50,
+        "avg_response_time": 0.3,
+        "success_count": 1,
+        "fail_count": 0,
+        "overall_score": 94.7,
+        "last_success": "2025-07-23T09:54:10.691800+00:00",
+        "protocol_counts": {
+          "wireguard://": 0,
+          "hysteria2://": 0,
+          "vless://": 42,
+          "vmess://": 1,
+          "ss://": 6,
+          "trojan://": 1,
           "tuic://": 0
         }
       }
