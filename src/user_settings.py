@@ -4,6 +4,7 @@
 # Add or remove URLs as needed. All URLs in this list are automatically enabled.
 SOURCE_URLS = [
     "https://t.me/s/NamiraNet",
+    "https://t.me/s/ShadowProxy66",
     "https://www.namira.dev/api/subscription",
     # "https://t.me/s/v2rayfree",
     # "https://t.me/s/FreeV2rays",
