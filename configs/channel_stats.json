@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-03T12:56:06.013419+00:00",
+  "timestamp": "2025-08-04T02:28:33.782265+00:00",
   "channels": [
     {
       "url": "https://t.me/s/NamiraNet",
@@ -28,21 +28,21 @@
       "url": "https://t.me/s/ShadowProxy66",
       "enabled": true,
       "metrics": {
-        "total_configs": 55,
-        "valid_configs": 44,
-        "unique_configs": 44,
-        "avg_response_time": 0.28,
+        "total_configs": 38,
+        "valid_configs": 27,
+        "unique_configs": 27,
+        "avg_response_time": 0.39,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 94.58,
-        "last_success": "2025-08-03T12:53:18.681482+00:00",
+        "overall_score": 92.18,
+        "last_success": "2025-08-04T02:25:46.458615+00:00",
         "protocol_counts": {
           "wireguard://": 0,
-          "hysteria2://": 15,
-          "vless://": 26,
-          "vmess://": 0,
+          "hysteria2://": 0,
+          "vless://": 24,
+          "vmess://": 2,
           "ss://": 1,
-          "trojan://": 2,
+          "trojan://": 0,
           "tuic://": 0
         }
       }
