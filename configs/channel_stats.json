@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-20T12:53:05.637627+00:00",
+  "timestamp": "2025-08-21T01:55:56.209885+00:00",
   "channels": [
     {
       "url": "https://t.me/s/NamiraNet",
@@ -29,20 +29,20 @@
       "enabled": true,
       "metrics": {
         "total_configs": 42,
-        "valid_configs": 41,
-        "unique_configs": 41,
-        "avg_response_time": 0.42,
+        "valid_configs": 40,
+        "unique_configs": 40,
+        "avg_response_time": 0.29,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 98.77,
-        "last_success": "2025-08-20T12:50:18.348920+00:00",
+        "overall_score": 98.38,
+        "last_success": "2025-08-21T01:53:08.068388+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
-          "vless://": 29,
-          "vmess://": 10,
-          "ss://": 0,
-          "trojan://": 2,
+          "vless://": 23,
+          "vmess://": 13,
+          "ss://": 4,
+          "trojan://": 0,
           "tuic://": 0
         }
       }
