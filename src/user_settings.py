@@ -3,7 +3,9 @@
 # List of source URLs to fetch proxy configurations from.
 # Add or remove URLs as needed. All URLs in this list are automatically enabled.
 SOURCE_URLS = [
-    "https://t.me/s/NamiraNet",
+    "https://t.me/s/MARAMBASHI",
+    "https://t.me/s/AZARBAYJAB1",
+    "https://t.me/s/Ln2Ray",
     "https://t.me/s/ShadowProxy66",
     "https://www.namira.dev/api/subscription",
     # "https://t.me/s/v2rayfree",
