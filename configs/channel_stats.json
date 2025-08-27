@@ -1,11 +1,57 @@
 {
-  "timestamp": "2025-08-27T01:54:00.378627+00:00",
+  "timestamp": "2025-08-27T11:42:38.159072+00:00",
   "channels": [
     {
-      "url": "https://t.me/s/NamiraNet",
+      "url": "https://t.me/s/MARAMBASHI",
+      "enabled": true,
+      "metrics": {
+        "total_configs": 56,
+        "valid_configs": 25,
+        "unique_configs": 25,
+        "avg_response_time": 0.54,
+        "success_count": 1,
+        "fail_count": 0,
+        "overall_score": 85.35,
+        "last_success": "2025-08-27T11:39:43.922249+00:00",
+        "protocol_counts": {
+          "wireguard://": 0,
+          "hysteria2://": 0,
+          "vless://": 20,
+          "vmess://": 1,
+          "ss://": 4,
+          "trojan://": 0,
+          "tuic://": 0
+        }
+      }
+    },
+    {
+      "url": "https://t.me/s/AZARBAYJAB1",
       "enabled": false,
       "metrics": {
         "total_configs": 0,
+        "valid_configs": 0,
+        "unique_configs": 0,
+        "avg_response_time": 0,
+        "success_count": 0,
+        "fail_count": 1,
+        "overall_score": 15.0,
+        "last_success": null,
+        "protocol_counts": {
+          "wireguard://": 0,
+          "hysteria2://": 0,
+          "vless://": 0,
+          "vmess://": 0,
+          "ss://": 0,
+          "trojan://": 0,
+          "tuic://": 0
+        }
+      }
+    },
+    {
+      "url": "https://t.me/s/Ln2Ray",
+      "enabled": false,
+      "metrics": {
+        "total_configs": 1,
         "valid_configs": 0,
         "unique_configs": 0,
         "avg_response_time": 0,
@@ -31,11 +77,11 @@
         "total_configs": 69,
         "valid_configs": 52,
         "unique_configs": 52,
-        "avg_response_time": 0.26,
+        "avg_response_time": 0.27,
         "success_count": 1,
         "fail_count": 0,
         "overall_score": 93.44,
-        "last_success": "2025-08-27T01:51:12.589930+00:00",
+        "last_success": "2025-08-27T11:39:50.812078+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
