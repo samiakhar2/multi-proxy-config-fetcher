@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-17T01:48:13.325706+00:00",
+  "timestamp": "2025-09-17T12:51:51.101265+00:00",
   "channels": [
     {
       "url": "https://t.me/s/MARAMBASHI",
@@ -72,21 +72,21 @@
     },
     {
       "url": "https://t.me/s/ShadowProxy66",
-      "enabled": true,
+      "enabled": false,
       "metrics": {
-        "total_configs": 62,
-        "valid_configs": 42,
-        "unique_configs": 42,
-        "avg_response_time": 0.27,
-        "success_count": 1,
-        "fail_count": 0,
-        "overall_score": 91.53,
-        "last_success": "2025-09-17T01:45:25.897392+00:00",
+        "total_configs": 0,
+        "valid_configs": 0,
+        "unique_configs": 0,
+        "avg_response_time": 0,
+        "success_count": 0,
+        "fail_count": 1,
+        "overall_score": 15.0,
+        "last_success": null,
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
-          "vless://": 31,
-          "vmess://": 11,
+          "vless://": 0,
+          "vmess://": 0,
           "ss://": 0,
           "trojan://": 0,
           "tuic://": 0
