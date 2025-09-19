@@ -79,15 +79,15 @@
       "type": "selector",
       "outbounds": [
         "auto",
-        "🇬🇧 vmess-5702324d (United Kingdom)",
-        "🇬🇧 vmess-82b32d7f (United Kingdom)",
-        "🇬🇧 vmess-1706f365 (United Kingdom)",
-        "🇩🇪 vmess-79dc4186 (Germany)",
-        "🇩🇪 vmess-62a0cb34 (Germany)",
-        "🇩🇪 vmess-d8bb3911 (Germany)",
-        "🇩🇪 vmess-c3d4639e (Germany)",
-        "🇩🇪 vmess-d2499a0c (Germany)",
-        "🇩🇪 vmess-48db0e24 (Germany)",
+        "🇬🇧 vmess-807ec83a (United Kingdom)",
+        "🇬🇧 vmess-a4e0bf2b (United Kingdom)",
+        "🇬🇧 vmess-d13be9c8 (United Kingdom)",
+        "🇩🇪 vmess-d0147c26 (Germany)",
+        "🇩🇪 vmess-79c7c096 (Germany)",
+        "🇩🇪 vmess-a9b29176 (Germany)",
+        "🇩🇪 vmess-73faf463 (Germany)",
+        "🇩🇪 vmess-895278a1 (Germany)",
+        "🇩🇪 vmess-fd1bc622 (Germany)",
         "direct"
       ]
     },
@@ -95,15 +95,15 @@
       "tag": "auto",
       "type": "urltest",
       "outbounds": [
-        "🇬🇧 vmess-5702324d (United Kingdom)",
-        "🇬🇧 vmess-82b32d7f (United Kingdom)",
-        "🇬🇧 vmess-1706f365 (United Kingdom)",
-        "🇩🇪 vmess-79dc4186 (Germany)",
-        "🇩🇪 vmess-62a0cb34 (Germany)",
-        "🇩🇪 vmess-d8bb3911 (Germany)",
-        "🇩🇪 vmess-c3d4639e (Germany)",
-        "🇩🇪 vmess-d2499a0c (Germany)",
-        "🇩🇪 vmess-48db0e24 (Germany)"
+        "🇬🇧 vmess-807ec83a (United Kingdom)",
+        "🇬🇧 vmess-a4e0bf2b (United Kingdom)",
+        "🇬🇧 vmess-d13be9c8 (United Kingdom)",
+        "🇩🇪 vmess-d0147c26 (Germany)",
+        "🇩🇪 vmess-79c7c096 (Germany)",
+        "🇩🇪 vmess-a9b29176 (Germany)",
+        "🇩🇪 vmess-73faf463 (Germany)",
+        "🇩🇪 vmess-895278a1 (Germany)",
+        "🇩🇪 vmess-fd1bc622 (Germany)"
       ],
       "url": "http://www.gstatic.com/generate_204",
       "interval": "10m",
@@ -115,7 +115,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇬🇧 vmess-5702324d (United Kingdom)",
+      "tag": "🇬🇧 vmess-807ec83a (United Kingdom)",
       "server": "57.128.189.143",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
@@ -136,7 +136,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇬🇧 vmess-82b32d7f (United Kingdom)",
+      "tag": "🇬🇧 vmess-a4e0bf2b (United Kingdom)",
       "server": "57.128.189.253",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
@@ -157,7 +157,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇬🇧 vmess-1706f365 (United Kingdom)",
+      "tag": "🇬🇧 vmess-d13be9c8 (United Kingdom)",
       "server": "57.128.189.222",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
@@ -178,7 +178,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇩🇪 vmess-79dc4186 (Germany)",
+      "tag": "🇩🇪 vmess-d0147c26 (Germany)",
       "server": "57.129.24.125",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
@@ -199,7 +199,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇩🇪 vmess-62a0cb34 (Germany)",
+      "tag": "🇩🇪 vmess-79c7c096 (Germany)",
       "server": "57.129.25.20",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
@@ -220,7 +220,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇩🇪 vmess-d8bb3911 (Germany)",
+      "tag": "🇩🇪 vmess-a9b29176 (Germany)",
       "server": "57.129.25.22",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
@@ -241,7 +241,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇩🇪 vmess-c3d4639e (Germany)",
+      "tag": "🇩🇪 vmess-73faf463 (Germany)",
       "server": "57.129.28.216",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
@@ -262,7 +262,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇩🇪 vmess-d2499a0c (Germany)",
+      "tag": "🇩🇪 vmess-895278a1 (Germany)",
       "server": "57.129.28.64",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
@@ -283,7 +283,7 @@
     },
     {
       "type": "vmess",
-      "tag": "🇩🇪 vmess-48db0e24 (Germany)",
+      "tag": "🇩🇪 vmess-fd1bc622 (Germany)",
       "server": "57.129.64.238",
       "server_port": 443,
       "uuid": "03fcc618-b93d-6796-6aed-8a38c975d581",
