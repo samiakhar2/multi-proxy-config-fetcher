@@ -22,7 +22,7 @@ USE_MAXIMUM_POWER = False
 
 # Desired number of configurations to fetch.
 # This is used only if USE_MAXIMUM_POWER is False.
-SPECIFIC_CONFIG_COUNT = 300
+SPECIFIC_CONFIG_COUNT = 400
 
 # Dictionary of protocols to enable or disable.
 # Set each protocol to True to enable, False to disable.
@@ -33,9 +33,9 @@ ENABLED_PROTOCOLS = {
     "vmess://": True,
     "ss://": True,
     "trojan://": True,
-    "tuic://": True,
+    "tuic://": False,
 }
 
 # Maximum age of configurations in days.
 # Configurations older than this will be considered invalid.
-MAX_CONFIG_AGE_DAYS = 7
+MAX_CONFIG_AGE_DAYS = 5
