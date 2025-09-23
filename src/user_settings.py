@@ -10,6 +10,7 @@ SOURCE_URLS = [
     "https://t.me/s/DirectVPN",
     "https://raw.githubusercontent.com/MahsaNetConfigTopic/config/refs/heads/main/xray_final.txt",
     "https://raw.githubusercontent.com/imegabiz/ss-config-updater/refs/heads/main/configs.txt",
+    "https://raw.githubusercontent.com/Kwinshadow/TelegramV2rayCollector/main/sublinks/mix.txt",
     "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/proxies.txt",
     "https://raw.githubusercontent.com/darkvpnapp/CloudflarePlus/refs/heads/main/proxy",
     "https://v2.alicivil.workers.dev",
