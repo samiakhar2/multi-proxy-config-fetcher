@@ -161,7 +161,11 @@ class ConfigToSingbox:
                 transport = {}
                 if data.get('net') == 'ws':
                     transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['add'])}}
-                tls = {"enabled": data.get('tls') == 'tls', "server_name": data.get('sni', data['add']), "insecure": False, "utls": {"enabled": True, "fingerprint": "chrome"}} if data.get('tls') == 'tls' else {"enabled": False}
+                tls = {}
+                if data.get('tls') == 'tls':
+                    tls = {"enabled": True, "server_name": data.get('sni', data['add']), "insecure": False, "alpn": ["http/1.1"], "record_fragment": False, "utls": {"enabled": True, "fingerprint": "chrome"}}
+                else:
+                    tls = {"enabled": False}
                 return {"type": "vmess", "tag": tag, "server": data['add'], "server_port": int(data['port']), "uuid": data['id'], "security": data.get('scy', 'auto'), "alter_id": int(data.get('aid', 0)), "transport": transport, "tls": tls}
             elif config_lower.startswith('vless://'):
                 data = self.parse_vless(config)
@@ -172,7 +176,11 @@ class ConfigToSingbox:
                 if data['type'] == 'ws':
                     transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['address'])}}
                 tls_enabled = data['security'] == 'tls' or data['port'] in [443, 2053, 2083, 2087, 2096, 8443]
-                tls = {"enabled": True, "server_name": data['sni'], "insecure": False, "utls": {"enabled": True, "fingerprint": "chrome"}} if tls_enabled else {"enabled": False}
+                tls = {}
+                if tls_enabled:
+                    tls = {"enabled": True, "server_name": data['sni'], "insecure": False, "alpn": ["http/1.1"], "record_fragment": False, "utls": {"enabled": True, "fingerprint": "chrome"}}
+                else:
+                    tls = {"enabled": False}
                 return {"type": "vless", "tag": tag, "server": data['address'], "server_port": data['port'], "uuid": data['uuid'], "flow": data.get('flow', ''), "tls": tls, "transport": transport}
             elif config_lower.startswith('trojan://'):
                 data = self.parse_trojan(config)
@@ -182,7 +190,7 @@ class ConfigToSingbox:
                 transport = {}
                 if data['type'] == 'ws':
                     transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['address'])}}
-                tls = {"enabled": True, "server_name": data['sni'], "insecure": False, "alpn": data['alpn'].split(',') if data['alpn'] else [], "utls": {"enabled": True, "fingerprint": "chrome"}}
+                tls = {"enabled": True, "server_name": data['sni'], "insecure": False, "alpn": ["http/1.1"], "record_fragment": False, "utls": {"enabled": True, "fingerprint": "chrome"}}
                 return {"type": "trojan", "tag": tag, "server": data['address'], "server_port": data['port'], "password": data['password'], "tls": tls, "transport": transport}
             elif config_lower.startswith(('hysteria2://', 'hy2://')):
                 data = self.parse_hysteria2(config)
