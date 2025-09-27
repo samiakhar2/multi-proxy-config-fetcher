@@ -15,7 +15,6 @@ SOURCE_URLS = [
     "https://raw.githubusercontent.com/arshiacomplus/v2rayExtractor/refs/heads/main/mix/sub.html",
     "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/proxies.txt",
     "https://raw.githubusercontent.com/darkvpnapp/CloudflarePlus/refs/heads/main/proxy",
-    "https://v2.alicivil.workers.dev",
     # Add more URLs here if you want to include additional sources.
 ]
 
