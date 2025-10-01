@@ -1,22 +1,22 @@
 {
-  "timestamp": "2025-10-01T02:00:52.773284+00:00",
+  "timestamp": "2025-10-01T12:53:48.505979+00:00",
   "channels": [
     {
       "url": "https://t.me/s/MARAMBASHI",
       "enabled": true,
       "metrics": {
         "total_configs": 59,
-        "valid_configs": 27,
-        "unique_configs": 27,
-        "avg_response_time": 0.57,
+        "valid_configs": 28,
+        "unique_configs": 28,
+        "avg_response_time": 0.76,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 85.59,
-        "last_success": "2025-10-01T01:57:58.708169+00:00",
+        "overall_score": 85.73,
+        "last_success": "2025-10-01T12:50:53.818942+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
-          "vless://": 27,
+          "vless://": 28,
           "vmess://": 0,
           "ss://": 0,
           "trojan://": 0,
