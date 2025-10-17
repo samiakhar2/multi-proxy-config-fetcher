@@ -12,17 +12,24 @@ This project automatically fetches and updates various proxy configurations from
 
 ## Quick Access to Configs
 
-You can directly access the latest configurations through this URL:
+You can directly access the latest v2ray/Xray configurations through this URL:
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs.txt
 ```
 This project features advanced capabilities for proxy configuration management. The retrieved configurations are automatically converted to Sing-box format and stored in a separate JSON file. For each server, its geographical location is identified using the get location method, and the corresponding flag emoji and country name are automatically added to its tag. These features make proxy management and usage significantly more user-friendly and efficient.
 
-Sing-box subscription link:
-```
-https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs.json
-```
+This project now includes the latest Sing-box core for **real-time configuration health testing and verification**.
 
+### Sing-box Configurations (All)
+Access all configurations converted to Sing-box format via this URL:
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs_all.json
+```
+### Sing-box Configurations (Tested and Healthy)
+Access configurations that have successfully passed real-time health checks using the Sing-box core via this URL:
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs_tested.json
+```
 ## Channel and URL Performance
 
 Below is the real-time performance statistics of the configured sources (Telegram channels and other URLs). This chart is automatically updated every hour.
@@ -79,6 +86,9 @@ The overall score is calculated in real-time and updated hourly. Sources scoring
 - Real-time source performance monitoring
 - Automatic source health management
 - Dynamic protocol distribution balancing
+- Configuration testing with Sing-box core
+- Geographical location identification for servers
+- Automatic flag emoji and country name tagging
 
 ## Setup
 
@@ -125,10 +135,17 @@ If you fork this repository, you need to manually enable GitHub Actions:
 ├── src/
 │   ├── config.py              # Project configuration
 │   ├── config_validator.py    # Config validation and verification
-│   └── fetch_configs.py       # Main fetcher implementation
+│   ├── fetch_configs.py       # Main fetcher implementation
+│   ├── config_to_singbox.py   # Sing-box format converter
+│   └── config_tester.py       # Configuration tester
 ├── configs/
-│   ├── proxy_configs.txt      # Output configs
+│   ├── proxy_configs.txt      # Raw proxy configurations
+│   ├── singbox_configs_all.json    # All Sing-box configurations
+│   ├── singbox_configs_tested.json # Tested Sing-box configurations
 │   └── channel_stats.json     # Source performance stats
+├── assets/
+│   ├── channel_stats_chart.svg     # Performance chart
+│   └── performance_report.html     # Interactive dashboard
 └── .github/
     └── workflows/
         └── update-configs.yml # GitHub Actions workflow
