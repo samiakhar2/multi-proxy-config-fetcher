@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
     
@@ -27,6 +28,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
+    - name: Install sing-box
+      run: |
+        LATEST_URL=$(curl -s "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep "browser_download_url.*linux_amd64.deb" | cut -d : -f 2,3 | tr -d \")
+        wget -O sing-box.deb $LATEST_URL
+        sudo dpkg -i sing-box.deb
+        sudo apt-get install -f
+    
     - name: Create directories
       run: |
         mkdir -p assets
@@ -36,12 +44,23 @@ jobs:
       run: python src/fetch_configs.py
       continue-on-error: true
     
-    - name: Generate charts and reports
-      run: python src/generate_charts.py
-      
     - name: Convert configs to sing-box format
       run: python src/config_to_singbox.py
     
+    - name: Backup original sing-box config
+      run: |
+        if [ -f configs/singbox_configs.json ]; then
+          cp configs/singbox_configs.json configs/singbox_configs_all.json
+          echo "Original sing-box config backed up to singbox_configs_all.json"
+        fi
+    
+    - name: Test sing-box configs
+      run: python src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json 8 10
+      continue-on-error: true
+    
+    - name: Generate charts and reports
+      run: python src/generate_charts.py
+      
     - name: Update README timestamps and stats
       run: |
         timestamp=$(date +%s)
@@ -58,18 +77,15 @@ jobs:
         sed -i "s/channel_stats_chart\.svg?v=[0-9]*/channel_stats_chart.svg?v=$timestamp/" README_RU.md
         sed -i "s/performance_report\.html?v=[0-9]*/performance_report.html?v=$timestamp/" README_RU.md
     
-    - name: Setup Git
+    - name: Commit and push changes
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-    
-    - name: Commit and push changes
-      run: |
         git add configs/proxy_configs.txt
-        git add configs/singbox_configs.json
+        git add configs/singbox_configs_all.json
+        git add configs/singbox_configs_tested.json
         git add configs/channel_stats.json
-        git add assets/channel_stats_chart.svg
-        git add assets/performance_report.html
+        git add assets/
         git add README.md
         git add README_FA.md
         git add README_CN.md
