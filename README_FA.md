@@ -14,17 +14,24 @@
 
 ## دسترسی سریع به پیکربندی‌ها
 
-شما می‌توانید مستقیماً از طریق این URL به آخرین پیکربندی‌ها دسترسی پیدا کنید:
+شما می‌توانید مستقیماً از طریق این URL به آخرین پیکربندی‌های v2ray/Xray دسترسی پیدا کنید:
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs.txt
 ```
 این پروژه دارای قابلیت‌های پیشرفته‌ای برای مدیریت کانفیگ‌های پروکسی است. کانفیگ‌های دریافت شده به صورت خودکار به فرمت Sing-box تبدیل می‌شوند و در یک فایل JSON جداگانه ذخیره می‌شوند. برای هر سرور، موقعیت جغرافیایی آن با استفاده از متد get location شناسایی شده و به صورت خودکار ایموجی پرچم و نام کشور مربوطه به تگ آن اضافه می‌شود. این ویژگی‌ها باعث می‌شود مدیریت و استفاده از پروکسی‌ها برای کاربران بسیار ساده‌تر شود.
 
-لینک اشتراک Sing-box:
-```
-https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs.json
-```
+این پروژه اکنون شامل آخرین هسته سینگ‌باکس برای **تست و بررسی سلامت پیکربندی‌ها** به صورت **بلادرنگ** است.
 
+### پیکربندی‌های Sing-box (همه)
+از طریق این آدرس به تمام پیکربندی‌های تبدیل شده به فرمت Sing-box دسترسی پیدا کنید:
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs_all.json
+```
+### پیکربندی‌های Sing-box (تست شده و سالم)
+از طریق این آدرس به پیکربندی‌هایی که با استفاده از هسته سینگ‌باکس، بررسی سلامت بلادرنگ را با موفقیت پشت سر گذاشته‌اند، دسترسی پیدا کنید:
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs_tested.json
+```
 ## عملکرد کانال‌ها و URL‌ها
 
 در زیر، آمار عملکرد بلادرنگ منابع پیکربندی شده (کانال‌های تلگرام و سایر URL‌ها) را مشاهده می‌کنید. این نمودار هر ساعت به‌طور خودکار به‌روزرسانی می‌شود.
@@ -81,6 +88,9 @@ https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/head
 - نظارت بلادرنگ بر عملکرد منابع
 - مدیریت خودکار سلامت منابع
 - متعادل‌سازی پویای توزیع پروتکل‌ها
+- تست پیکربندی با هسته Sing-box
+- شناسایی موقعیت جغرافیایی سرورها
+- افزودن خودکار ایموجی پرچم و نام کشور
 
 ## راه‌اندازی
 
@@ -127,10 +137,17 @@ python src/fetch_configs.py
 ├── src/
 │   ├── config.py              # پیکربندی پروژه
 │   ├── config_validator.py    # اعتبارسنجی و تأیید پیکربندی
-│   └── fetch_configs.py       # پیاده‌سازی اصلی دریافت‌کننده
+│   ├── fetch_configs.py       # پیاده‌سازی اصلی دریافت‌کننده
+│   ├── config_to_singbox.py   # مبدیل فرمت Sing-box
+│   └── config_tester.py       # تست‌کننده پیکربندی
 ├── configs/
-│   ├── proxy_configs.txt      # پیکربندی‌های خروجی
+│   ├── proxy_configs.txt      # پیکربندی‌های خام پراکسی
+│   ├── singbox_configs_all.json    # تمام پیکربندی‌های Sing-box
+│   ├── singbox_configs_tested.json # پیکربندی‌های تست شده Sing-box
 │   └── channel_stats.json     # آمار عملکرد منابع
+├── assets/
+│   ├── channel_stats_chart.svg     # نمودار عملکرد
+│   └── performance_report.html     # داشبورد تعاملی
 └── .github/
     └── workflows/
         └── update-configs.yml # گردش کار GitHub Actions
@@ -154,5 +171,3 @@ python src/fetch_configs.py
 
 توسعه یافته توسط **4n0nymou3**.  
 برای اطلاعات بیشتر یا تماس با توسعه‌دهنده، از [پروفایل X (توییتر)](https://x.com/4n0nymou3) دیدن کنید.
-
-</div>
