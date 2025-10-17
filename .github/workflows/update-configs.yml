@@ -27,6 +27,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
+    - name: Install sing-box
+      run: |
+        curl -fsSLO https://github.com/SagerNet/sing-box/releases/download/v1.12.10/sing-box_1.12.10_linux_amd64.deb
+        sudo dpkg -i sing-box_1.12.10_linux_amd64.deb
+        sudo apt-get install -f
+    
     - name: Create directories
       run: |
         mkdir -p assets
@@ -36,43 +42,47 @@ jobs:
       run: python src/fetch_configs.py
       continue-on-error: true
     
-    - name: Generate charts and reports
-      run: python src/generate_charts.py
-      
     - name: Convert configs to sing-box format
       run: python src/config_to_singbox.py
     
-    - name: Update README timestamps and stats
+    - name: Backup original singbox config
+      run: |
+        if [ -f configs/singbox_configs.json ]; then
+          cp configs/singbox_configs.json configs/singbox_configs_all.json
+          echo "Original sing-box config backed up"
+        fi
+    
+    - name: Test sing-box configs
+      run: python src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json 8 10
+      continue-on-error: true
+    
+    - name: Verify tested configs exist
+      run: |
+        if [ -f configs/singbox_configs_tested.json ] && [ -s configs/singbox_configs_tested.json ]; then
+          echo "Tested configs file created successfully"
+          tested_count=$(grep -o '"type":' configs/singbox_configs_tested.json | wc -l)
+          echo "Found $tested_count outbounds in tested config"
+        else
+          echo "Warning: Tested configs file is empty or missing"
+        fi
+    
+    - name: Generate charts and reports
+      run: python src/generate_charts.py
+    
+    - name: Update README timestamps
       run: |
         timestamp=$(date +%s)
-        
-        sed -i "s/channel_stats_chart\.svg?v=[0-9]*/channel_stats_chart.svg?v=$timestamp/" README.md
-        sed -i "s/performance_report\.html?v=[0-9]*/performance_report.html?v=$timestamp/" README.md
-        
-        sed -i "s/channel_stats_chart\.svg?v=[0-9]*/channel_stats_chart.svg?v=$timestamp/" README_FA.md
-        sed -i "s/performance_report\.html?v=[0-9]*/performance_report.html?v=$timestamp/" README_FA.md
-        
-        sed -i "s/channel_stats_chart\.svg?v=[0-9]*/channel_stats_chart.svg?v=$timestamp/" README_CN.md
-        sed -i "s/performance_report\.html?v=[0-9]*/performance_report.html?v=$timestamp/" README_CN.md
-        
-        sed -i "s/channel_stats_chart\.svg?v=[0-9]*/channel_stats_chart.svg?v=$timestamp/" README_RU.md
-        sed -i "s/performance_report\.html?v=[0-9]*/performance_report.html?v=$timestamp/" README_RU.md
+        sed -i "s/channel_stats_chart\.svg?v=[0-9]*/channel_stats_chart.svg?v=$timestamp/" README*.md
     
-    - name: Setup Git
+    - name: Commit changes
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-    
-    - name: Commit and push changes
-      run: |
         git add configs/proxy_configs.txt
-        git add configs/singbox_configs.json
+        git add configs/singbox_configs_all.json
+        git add configs/singbox_configs_tested.json
         git add configs/channel_stats.json
-        git add assets/channel_stats_chart.svg
-        git add assets/performance_report.html
-        git add README.md
-        git add README_FA.md
-        git add README_CN.md
-        git add README_RU.md
-        git commit -m "Update proxy configs, stats and reports" || echo "No changes to commit"
+        git add assets/
+        git add README*.md
+        git diff --staged --quiet || git commit -m "Update configs and stats"
         git push
