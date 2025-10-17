@@ -12,17 +12,24 @@
 
 ## 快速访问配置
 
-您可以通过以下 URL 直接访问最新配置：
+您可以通过以下 URL 直接访问最新 v2ray/Xray 配置：
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs.txt
 ```
 该项目具有高级代理配置管理功能。获取的配置会自动转换为 Sing-box 格式并存储在单独的 JSON 文件中。对于每个服务器，系统使用 get location 方法识别其地理位置，并自动将相应的国旗表情符号和国家名称添加到其标签中。这些功能使代理管理和使用变得更加用户友好和高效。
 
-Sing-box 订阅链接：
-```
-https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs.json
-```
+该项目现在集成了最新的 Sing-box 核心，用于**实时测试和验证配置的健康状况**。
 
+### Sing-box 配置（全部）
+通过此 URL 访问所有已转换为 Sing-box 格式的配置：
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs_all.json
+```
+### Sing-box 配置（已测试且健康）
+通过此 URL 访问那些使用 Sing-box 核心成功通过实时健康检查的配置：
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs_tested.json
+```
 ## 频道和 URL 性能
 
 以下是配置源（Telegram 频道和其他 URL）的实时性能统计。该图表每小时自动更新。
@@ -79,6 +86,9 @@ https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/head
 - 实时源性能监控
 - 自动源健康管理
 - 动态协议分布平衡
+- 使用 Sing-box 核心测试配置
+- 识别服务器地理位置
+- 自动添加国旗表情符号和国家名称
 
 ## 设置
 
@@ -125,10 +135,17 @@ python src/fetch_configs.py
 ├── src/
 │   ├── config.py              # 项目配置
 │   ├── config_validator.py    # 配置验证和校验
-│   └── fetch_configs.py       # 主获取器实现
+│   ├── fetch_configs.py       # 主获取器实现
+│   ├── config_to_singbox.py   # Sing-box 格式转换器
+│   └── config_tester.py       # 配置测试器
 ├── configs/
-│   ├── proxy_configs.txt      # 输出配置
+│   ├── proxy_configs.txt      # 原始代理配置
+│   ├── singbox_configs_all.json    # 所有 Sing-box 配置
+│   ├── singbox_configs_tested.json # 测试过的 Sing-box 配置
 │   └── channel_stats.json     # 源性能统计
+├── assets/
+│   ├── channel_stats_chart.svg     # 性能图表
+│   └── performance_report.html     # 交互式仪表盘
 └── .github/
     └── workflows/
         └── update-configs.yml # GitHub Actions 工作流
