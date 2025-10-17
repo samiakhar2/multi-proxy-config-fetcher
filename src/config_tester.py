@@ -71,7 +71,7 @@ class SingBoxTester:
             
             if process.poll() is not None:
                 stderr = process.stderr.read().decode('utf-8', errors='ignore') if process.stderr else ''
-                logger.warning(f"âœ— {tag} - Process crashed: {stderr[:100]}")
+                logger.warning(f"✗ {tag} - Process crashed: {stderr[:100]}")
                 return False, None, tag
             
             start_time = time.time()
@@ -89,27 +89,27 @@ class SingBoxTester:
                 delay = int((time.time() - start_time) * 1000)
                 
                 if response.status_code in [200, 204]:
-                    logger.info(f"âœ“ {tag} - OK ({delay}ms)")
+                    logger.info(f"✓ {tag} - OK ({delay}ms)")
                     return True, delay, tag
                 else:
-                    logger.warning(f"âœ— {tag} - HTTP {response.status_code}")
+                    logger.warning(f"✗ {tag} - HTTP {response.status_code}")
                     return False, None, tag
                     
             except requests.exceptions.ProxyError:
-                logger.warning(f"âœ— {tag} - Proxy error")
+                logger.warning(f"✗ {tag} - Proxy error")
                 return False, None, tag
             except requests.exceptions.Timeout:
-                logger.warning(f"âœ— {tag} - Timeout")
+                logger.warning(f"✗ {tag} - Timeout")
                 return False, None, tag
             except requests.exceptions.ConnectionError:
-                logger.warning(f"âœ— {tag} - Connection error")
+                logger.warning(f"✗ {tag} - Connection error")
                 return False, None, tag
             except Exception as e:
-                logger.warning(f"âœ— {tag} - {type(e).__name__}")
+                logger.warning(f"✗ {tag} - {type(e).__name__}")
                 return False, None, tag
                 
         except Exception as e:
-            logger.error(f"âœ— {tag} - Setup error: {str(e)}")
+            logger.error(f"✗ {tag} - Setup error: {str(e)}")
             return False, None, tag
             
         finally:
@@ -188,7 +188,7 @@ def update_config_with_working_outbounds(config: Dict, working_outbounds: List[D
         if ob_type == 'selector':
             new_list = []
             for tag in ob.get('outbounds', []):
-                if tag in working_tags or tag in ['ðŸ‘½ Best Ping ðŸš€', 'auto', 'direct', 'block']:
+                if tag in working_tags or tag in ['👽 Best Ping 🚀', 'auto', 'direct', 'block']:
                     new_list.append(tag)
             ob['outbounds'] = new_list
             new_outbounds.append(ob)
