@@ -1,18 +1,18 @@
 {
-  "timestamp": "2025-10-20T02:01:18.643112+00:00",
+  "timestamp": "2025-10-20T12:53:58.095704+00:00",
   "channels": [
     {
       "url": "https://t.me/s/MARAMBASHI",
       "enabled": true,
       "metrics": {
-        "total_configs": 57,
+        "total_configs": 56,
         "valid_configs": 35,
         "unique_configs": 35,
-        "avg_response_time": 5.52,
+        "avg_response_time": 0.79,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 82.07,
-        "last_success": "2025-10-20T01:58:24.151329+00:00",
+        "overall_score": 89.44,
+        "last_success": "2025-10-20T12:51:03.305630+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
@@ -31,11 +31,11 @@
         "total_configs": 34,
         "valid_configs": 17,
         "unique_configs": 17,
-        "avg_response_time": 0.31,
+        "avg_response_time": 0.45,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 87.04,
-        "last_success": "2025-10-20T01:58:26.531930+00:00",
+        "overall_score": 86.82,
+        "last_success": "2025-10-20T12:51:05.829818+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
