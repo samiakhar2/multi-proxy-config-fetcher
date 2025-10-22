@@ -41,3 +41,25 @@ ENABLED_PROTOCOLS = {
 # Maximum age of configurations in days.
 # Configurations older than this will be considered invalid.
 MAX_CONFIG_AGE_DAYS = 5
+
+# --- Config Tester Settings ---
+
+# Set to True to enable testing of configs using sing-box.
+# If True, sing-box will be used to test all fetched configs and create a 'tested' config file.
+# If False, the testing step will be skipped.
+ENABLE_CONFIG_TESTER = True
+
+# Number of parallel workers to use for testing configs.
+# A higher number means faster testing but uses more CPU/RAM.
+TESTER_MAX_WORKERS = 8
+
+# Maximum time (in seconds) to wait for a config to respond during testing.
+# Configs that take longer than this will be marked as failed.
+TESTER_TIMEOUT_SECONDS = 10
+
+# List of URLs to test configs against.
+# The tester will try each URL in order until one succeeds.
+TESTER_URLS = [
+    'https://www.youtube.com/generate_204',
+    'https://www.gstatic.com/generate_204'
+]
