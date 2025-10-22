@@ -6,7 +6,11 @@ from dataclasses import dataclass
 import logging
 from math import inf
 
-from user_settings import SOURCE_URLS, USE_MAXIMUM_POWER, SPECIFIC_CONFIG_COUNT, ENABLED_PROTOCOLS, MAX_CONFIG_AGE_DAYS
+from user_settings import (
+    SOURCE_URLS, USE_MAXIMUM_POWER, SPECIFIC_CONFIG_COUNT, ENABLED_PROTOCOLS,
+    MAX_CONFIG_AGE_DAYS, ENABLE_CONFIG_TESTER, TESTER_MAX_WORKERS,
+    TESTER_TIMEOUT_SECONDS, TESTER_URLS
+)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -23,6 +27,7 @@ class ChannelMetrics:
     overall_score: float = 0.0
     protocol_counts: Dict[str, int] = None
 
+    
     def __post_init__(self):
         if self.protocol_counts is None:
             self.protocol_counts = {}
@@ -44,6 +49,7 @@ class ChannelConfig:
             raise ValueError("Invalid URL protocol")
         return url
         
+    
     def calculate_overall_score(self):
         try:
             total_attempts = max(1, self.metrics.success_count + self.metrics.fail_count)
@@ -69,6 +75,11 @@ class ProxyConfig:
         self.use_maximum_power = USE_MAXIMUM_POWER
         self.specific_config_count = SPECIFIC_CONFIG_COUNT
         self.MAX_CONFIG_AGE_DAYS = MAX_CONFIG_AGE_DAYS
+        
+        self.ENABLE_CONFIG_TESTER = ENABLE_CONFIG_TESTER
+        self.TESTER_MAX_WORKERS = TESTER_MAX_WORKERS
+        self.TESTER_TIMEOUT_SECONDS = TESTER_TIMEOUT_SECONDS
+        self.TESTER_URLS = TESTER_URLS
 
         initial_urls = [ChannelConfig(url=url) for url in SOURCE_URLS]
         self.SOURCE_URLS = self._remove_duplicate_urls(initial_urls)
