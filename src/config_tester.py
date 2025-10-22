@@ -9,7 +9,9 @@ import time
 import requests
 import signal
 import socket
+import sys
 from contextlib import closing
+from config import ProxyConfig
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -23,10 +25,10 @@ def find_free_port():
 
 
 class SingBoxTester:
-    def __init__(self, singbox_path: str = 'sing-box', timeout: int = 10):
+    def __init__(self, singbox_path: str = 'sing-box', timeout: int = 10, test_urls: List[str] = None):
         self.singbox_path = singbox_path
         self.timeout = timeout
-        self.test_url = 'https://www.youtube.com/generate_204'
+        self.test_urls = test_urls if test_urls else ['https://www.youtube.com/generate_204']
         
     def create_minimal_config(self, outbound: Dict, mixed_port: int) -> Dict:
         return {
@@ -74,39 +76,39 @@ class SingBoxTester:
                 logger.warning(f"✗ {tag} - Process crashed: {stderr[:100]}")
                 return False, None, tag
             
-            start_time = time.time()
+            proxies = {
+                'http': f'http://127.0.0.1:{mixed_port}',
+                'https': f'http://127.0.0.1:{mixed_port}'
+            }
             
-            try:
-                response = requests.get(
-                    self.test_url,
-                    proxies={
-                        'http': f'http://127.0.0.1:{mixed_port}',
-                        'https': f'http://127.0.0.1:{mixed_port}'
-                    },
-                    timeout=self.timeout
-                )
-                
-                delay = int((time.time() - start_time) * 1000)
-                
-                if response.status_code in [200, 204]:
-                    logger.info(f"✓ {tag} - OK ({delay}ms)")
-                    return True, delay, tag
-                else:
-                    logger.warning(f"✗ {tag} - HTTP {response.status_code}")
-                    return False, None, tag
+            for url in self.test_urls:
+                start_time = time.time()
+                try:
+                    response = requests.get(
+                        url,
+                        proxies=proxies,
+                        timeout=self.timeout
+                    )
+                    delay = int((time.time() - start_time) * 1000)
                     
-            except requests.exceptions.ProxyError:
-                logger.warning(f"✗ {tag} - Proxy error")
-                return False, None, tag
-            except requests.exceptions.Timeout:
-                logger.warning(f"✗ {tag} - Timeout")
-                return False, None, tag
-            except requests.exceptions.ConnectionError:
-                logger.warning(f"✗ {tag} - Connection error")
-                return False, None, tag
-            except Exception as e:
-                logger.warning(f"✗ {tag} - {type(e).__name__}")
-                return False, None, tag
+                    if response.status_code in [200, 204]:
+                        logger.info(f"✓ {tag} - OK ({delay}ms via {url.split('/')[2]})")
+                        return True, delay, tag
+                    else:
+                        logger.warning(f"✗ {tag} - HTTP {response.status_code} on {url.split('/')[2]}")
+                        
+                except requests.exceptions.ProxyError as e:
+                    logger.warning(f"✗ {tag} - Proxy error: {e}")
+                    return False, None, tag
+                except requests.exceptions.Timeout:
+                    logger.warning(f"✗ {tag} - Timeout on {url.split('/')[2]}")
+                except requests.exceptions.ConnectionError:
+                    logger.warning(f"✗ {tag} - Connection error on {url.split('/')[2]}")
+                except Exception as e:
+                    logger.warning(f"✗ {tag} - {type(e).__name__} on {url.split('/')[2]}")
+            
+            logger.warning(f"✗ {tag} - Failed all test URLs")
+            return False, None, tag
                 
         except Exception as e:
             logger.error(f"✗ {tag} - Setup error: {str(e)}")
@@ -134,13 +136,13 @@ class SingBoxTester:
 
 
 class ParallelConfigTester:
-    def __init__(self, singbox_path: str = 'sing-box', max_workers: int = 8, timeout: int = 10):
-        self.tester = SingBoxTester(singbox_path, timeout)
+    def __init__(self, singbox_path: str = 'sing-box', max_workers: int = 8, timeout: int = 10, test_urls: List[str] = None):
+        self.tester = SingBoxTester(singbox_path, timeout, test_urls)
         self.max_workers = max_workers
         
     def test_all(self, outbounds: List[Dict]) -> List[Dict]:
         logger.info(f"Testing {len(outbounds)} configs with {self.max_workers} workers...")
-        logger.info(f"Test URL: {self.tester.test_url}")
+        logger.info(f"Test URLs: {self.tester.test_urls}")
         
         working = []
         tested = 0
@@ -160,7 +162,7 @@ class ParallelConfigTester:
                     
                     if tested % 25 == 0:
                         logger.info(f"Progress: {tested}/{len(outbounds)} ({len(working)} working)")
-                        
+                
                 except Exception as e:
                     logger.error(f"Test error: {str(e)}")
         
@@ -210,16 +212,32 @@ def update_config_with_working_outbounds(config: Dict, working_outbounds: List[D
 
 
 def main():
-    import sys
-    
+    config_settings = ProxyConfig()
+
     if len(sys.argv) < 3:
-        print("Usage: python config_tester.py <input.json> <output.json> [max_workers] [timeout]")
+        print("Usage: python config_tester.py <input.json> <output.json>")
         sys.exit(1)
     
     input_file = sys.argv[1]
     output_file = sys.argv[2]
-    max_workers = int(sys.argv[3]) if len(sys.argv) > 3 else 8
-    timeout = int(sys.argv[4]) if len(sys.argv) > 4 else 10
+
+    if not config_settings.ENABLE_CONFIG_TESTER:
+        logger.info("Config testing is disabled in user_settings.py. Skipping.")
+        try:
+            with open(input_file, 'r', encoding='utf-8') as f_in:
+                config_data = json.load(f_in)
+            os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
+            with open(output_file, 'w', encoding='utf-8') as f_out:
+                json.dump(config_data, f_out, indent=4, ensure_ascii=False)
+            logger.info(f"Copied {input_file} to {output_file} as testing is disabled.")
+            sys.exit(0)
+        except Exception as e:
+            logger.error(f"Failed to copy {input_file} to {output_file}: {str(e)}")
+            sys.exit(1)
+
+    max_workers = config_settings.TESTER_MAX_WORKERS
+    timeout = config_settings.TESTER_TIMEOUT_SECONDS
+    test_urls = config_settings.TESTER_URLS
     
     logger.info(f"Loading config from {input_file}")
     
@@ -237,7 +255,7 @@ def main():
     
     logger.info(f"Found {len(proxy_outbounds)} proxy outbounds")
     
-    tester = ParallelConfigTester(max_workers=max_workers, timeout=timeout)
+    tester = ParallelConfigTester(max_workers=max_workers, timeout=timeout, test_urls=test_urls)
     working = tester.test_all(proxy_outbounds)
     
     if working:
