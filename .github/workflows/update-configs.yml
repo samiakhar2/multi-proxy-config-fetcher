@@ -55,7 +55,7 @@ jobs:
         fi
     
     - name: Test sing-box configs
-      run: python src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json 8 10
+      run: python src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json
       continue-on-error: true
     
     - name: Generate charts and reports
