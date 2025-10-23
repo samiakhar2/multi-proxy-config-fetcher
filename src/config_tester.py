@@ -82,6 +82,7 @@ class SingBoxTester:
             }
             
             for url in self.test_urls:
+                domain = url.split('/')[2]
                 start_time = time.time()
                 try:
                     response = requests.get(
@@ -92,20 +93,20 @@ class SingBoxTester:
                     delay = int((time.time() - start_time) * 1000)
                     
                     if response.status_code in [200, 204]:
-                        logger.info(f"✓ {tag} - OK ({delay}ms via {url.split('/')[2]})")
+                        logger.info(f"✓ {tag} - OK ({delay}ms via {domain})")
                         return True, delay, tag
                     else:
-                        logger.warning(f"✗ {tag} - HTTP {response.status_code} on {url.split('/')[2]}")
+                        logger.warning(f"✗ {tag} - HTTP {response.status_code} on {domain}")
                         
                 except requests.exceptions.ProxyError as e:
-                    logger.warning(f"✗ {tag} - Proxy error: {e}")
+                    logger.warning(f"✗ {tag} - Proxy error: {str(e)}")
                     return False, None, tag
                 except requests.exceptions.Timeout:
-                    logger.warning(f"✗ {tag} - Timeout on {url.split('/')[2]}")
-                except requests.exceptions.ConnectionError:
-                    logger.warning(f"✗ {tag} - Connection error on {url.split('/')[2]}")
+                    logger.warning(f"✗ {tag} - Timeout on {domain}")
+                except requests.exceptions.ConnectionError as e:
+                    logger.warning(f"✗ {tag} - Connection error on {domain}: {str(e)}")
                 except Exception as e:
-                    logger.warning(f"✗ {tag} - {type(e).__name__} on {url.split('/')[2]}")
+                    logger.warning(f"✗ {tag} - {type(e).__name__} on {domain}: {str(e)}")
             
             logger.warning(f"✗ {tag} - Failed all test URLs")
             return False, None, tag
