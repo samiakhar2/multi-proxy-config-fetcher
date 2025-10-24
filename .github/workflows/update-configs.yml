@@ -68,7 +68,7 @@ jobs:
       continue-on-error: true
     
     - name: Convert configs to sing-box format
-      run: python src/config_to_singbox.py configs/location_cache.json configs/proxy_configs.txt
+      run: python src/config_to_singbox.py configs/location_cache.json
     
     - name: Backup original sing-box config
       run: |
