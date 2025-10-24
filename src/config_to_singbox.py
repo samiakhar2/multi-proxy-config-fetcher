@@ -1,9 +1,8 @@
 import json
 import base64
-import time
-import socket
-import requests
-from typing import Dict, Optional, Tuple
+import sys
+import os
+from typing import Dict, Optional
 from urllib.parse import urlparse, parse_qs
 import logging
 
@@ -11,71 +10,26 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class ConfigToSingbox:
-    def __init__(self):
+    def __init__(self, location_file: str, input_config_file: str):
+        self.input_file = input_config_file
         self.output_file = 'configs/singbox_configs.json'
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        self.location_cache: Dict[str, Tuple[str, str]] = {}
+        self.location_cache: Dict[str, tuple] = {}
+        self.load_location_cache(location_file)
 
-    def get_location_from_ip_api(self, ip: str) -> Tuple[str, str]:
+    def load_location_cache(self, location_file: str):
         try:
-            response = requests.get(f'http://ip-api.com/json/{ip}', headers=self.headers, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('status') == 'success' and data.get('countryCode'):
-                    return data['countryCode'].lower(), data['country']
-        except requests.exceptions.RequestException as e:
-            logger.warning(f"ip-api.com failed: {e}")
-        return '', ''
-
-    def get_location_from_ipapi_co(self, ip: str) -> Tuple[str, str]:
-        try:
-            response = requests.get(f'https://ipapi.co/{ip}/json/', headers=self.headers, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('country_code') and data.get('country_name'):
-                    return data['country_code'].lower(), data['country_name']
-        except requests.exceptions.RequestException as e:
-            logger.warning(f"ipapi.co failed: {e}")
-        return '', ''
-
-    def get_location_from_ipwhois(self, ip: str) -> Tuple[str, str]:
-        try:
-            response = requests.get(f'https://ipwhois.app/json/{ip}', headers=self.headers, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('country_code') and data.get('country'):
-                    return data['country_code'].lower(), data['country']
-        except requests.exceptions.RequestException as e:
-            logger.warning(f"ipwhois.app failed: {e}")
-        return '', ''
+            with open(location_file, 'r', encoding='utf-8') as f:
+                self.location_cache = json.load(f)
+            logger.info(f"Loaded {len(self.location_cache)} location entries from cache")
+        except FileNotFoundError:
+            logger.error(f"{location_file} not found!")
+        except Exception as e:
+            logger.error(f"Error loading location cache: {e}")
 
     def get_location(self, address: str) -> tuple:
         if address in self.location_cache:
-            return self.location_cache[address]
-
-        try:
-            ip = socket.gethostbyname(address)
-        except socket.gaierror:
-            logger.warning(f"Could not resolve hostname: {address}")
-            return "🏳️", "Unknown"
-
-        apis = [
-            self.get_location_from_ip_api,
-            self.get_location_from_ipapi_co,
-            self.get_location_from_ipwhois,
-        ]
-        
-        for api_func in apis:
-            country_code, country = api_func(ip)
-            if country_code and country and len(country_code) == 2:
-                flag = ''.join(chr(ord('🇦') + ord(c.upper()) - ord('A')) for c in country_code)
-                self.location_cache[address] = (flag, country)
-                return flag, country
-        
-        self.location_cache[address] = ("🏳️", "Unknown")
-        return "🏳️", "Unknown"
+             return tuple(self.location_cache[address])
+        return ("🏳️", "Unknown")
 
     def decode_vmess(self, config: str) -> Optional[Dict]:
         try:
@@ -234,24 +188,36 @@ class ConfigToSingbox:
 
     def process_configs(self):
         try:
-            with open('configs/proxy_configs.txt', 'r', encoding='utf-8') as f:
+            with open(self.input_file, 'r', encoding='utf-8') as f:
                 configs = [line for line in f.read().strip().split('\n') if line.strip() and not line.strip().startswith('//')]
         except FileNotFoundError:
-            logger.error("proxy_configs.txt not found! Exiting.")
+            logger.error(f"{self.input_file} not found! Exiting.")
             return
         except Exception as e:
-            logger.error(f"Error reading proxy_configs.txt: {e}")
+            logger.error(f"Error reading {self.input_file}: {e}")
             return
 
         outbounds, valid_tags = [], []
-        counters = {"VLESS": 1, "Trojan": 1, "VMess": 1, "SS": 1, "Hysteria2": 1}
-        protocol_map = {'vless': 'VLESS', 'trojan': 'Trojan', 'vmess': 'VMess', 'ss': 'SS', 'hysteria2': 'Hysteria2', 'hy2': 'Hysteria2'}
+        counters = {"VLESS": 1, "Trojan": 1, "VMess": 1, "SS": 1, "Hysteria2": 1, "TUIC": 1}
+        protocol_map = {
+            'vless': 'VLESS', 
+            'trojan': 'Trojan', 
+            'vmess': 'VMess', 
+            'ss': 'SS', 
+            'hysteria2': 'Hysteria2', 
+            'hy2': 'Hysteria2',
+            'tuic': 'TUIC'
+        }
 
         for config in configs:
             protocol_key = config.split('://')[0].lower()
             protocol_name = protocol_map.get(protocol_key)
             
             if protocol_name:
+                if protocol_name == 'TUIC':
+                    logger.warning("TUIC protocol conversion to sing-box JSON is not supported in this script.")
+                    continue
+                
                 converted = self.convert_to_singbox(config, counters[protocol_name], protocol_name)
                 if converted:
                     outbounds.append(converted)
@@ -288,7 +254,7 @@ class ConfigToSingbox:
             "outbounds": [
                 {"type": "selector", "tag": "🌐 Anonymous Multi", "outbounds": ["👽 Best Ping 🚀"] + valid_tags + ["direct"]},
                 {"type": "direct", "tag": "direct"},
-                {"type": "urltest", "tag": "👽 Best Ping 🚀", "outbounds": valid_tags, "url": "https://www.gstatic.com/generate_204", "interrupt_exist_connections": False, "interval": "30s"}
+                {"type": "urltest", "tag": "👽 Best Ping 🚀", "outbounds": valid_tags, "url": "https.www.gstatic.com/generate_204", "interrupt_exist_connections": False, "interval": "30s"}
             ] + outbounds,
             "route": {
                 "rules": [
@@ -335,7 +301,13 @@ class ConfigToSingbox:
 
 
 def main():
-    converter = ConfigToSingbox()
+    if len(sys.argv) < 3:
+        print("Usage: python config_to_singbox.py <location.json> <input_configs.txt>")
+        sys.exit(1)
+    
+    location_file = sys.argv[1]
+    input_config_file = sys.argv[2]
+    converter = ConfigToSingbox(location_file, input_config_file)
     converter.process_configs()
 
 if __name__ == '__main__':
