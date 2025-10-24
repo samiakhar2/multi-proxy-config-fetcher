@@ -31,6 +31,14 @@ class XrayTester:
         self.xray_path = xray_path
         self.timeout = timeout
         self.test_urls = test_urls if test_urls else ['https://www.youtube.com/generate_204']
+        self.unsupported_protocols = ['tuic://', 'wireguard://']
+        
+    def is_supported_protocol(self, config_str: str) -> bool:
+        config_lower = config_str.lower()
+        for protocol in self.unsupported_protocols:
+            if config_lower.startswith(protocol):
+                return False
+        return True
         
     def parse_config_string(self, config_str: str) -> Optional[Dict]:
         try:
@@ -177,32 +185,6 @@ class XrayTester:
                 }
                 
                 return outbound
-            
-            elif config_lower.startswith(('hysteria2://', 'hy2://')):
-                url = urlparse(config_str)
-                if not url.hostname or not url.port:
-                    return None
-                query = dict(pair.split('=') for pair in url.query.split('&')) if url.query else {}
-                
-                outbound = {
-                    "protocol": "hysteria2",
-                    "settings": {
-                        "servers": [{
-                            "address": url.hostname,
-                            "port": int(url.port),
-                            "password": url.username or query.get('password', '')
-                        }]
-                    },
-                    "streamSettings": {
-                        "network": "udp",
-                        "security": "tls",
-                        "tlsSettings": {
-                            "serverName": query.get('sni', url.hostname),
-                            "allowInsecure": True
-                        }
-                    }
-                }
-                return outbound
                 
             return None
             
@@ -233,17 +215,18 @@ class XrayTester:
         }
     
     def test_config(self, config_str: str) -> Tuple[bool, Optional[int], str]:
-        if config_str.lower().startswith('tuic://'):
-            logger.info(f"✓ Skipping TUIC (Not supported by Xray, passing to sing-box)")
+        if not self.is_supported_protocol(config_str):
+            protocol = config_str.split('://')[0].upper()
+            logger.info(f"⊘ Skipping {protocol} (not supported by Xray core)")
             return True, 0, config_str
-
+        
         process = None
         config_file = None
         
         try:
             outbound = self.parse_config_string(config_str)
             if not outbound:
-                logger.warning(f"✗ Failed to parse config: {config_str[:40]}...")
+                logger.warning(f"✗ Failed to parse config")
                 return False, None, config_str
             
             socks_port = find_free_port()
@@ -340,6 +323,7 @@ class ParallelXrayTester:
         
         working = []
         tested = 0
+        skipped = 0
         
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             futures = {executor.submit(self.tester.test_config, cfg): cfg for cfg in configs}
@@ -350,16 +334,18 @@ class ParallelXrayTester:
                 
                 try:
                     success, delay, config_str = future.result()
-                    if success and delay is not None:
+                    if success:
                         working.append(config_str)
+                        if delay == 0:
+                            skipped += 1
                     
                     if tested % 25 == 0:
-                        logger.info(f"Progress: {tested}/{len(configs)} ({len(working)} working)")
+                        logger.info(f"Progress: {tested}/{len(configs)} ({len(working)} working, {skipped} skipped)")
                 
                 except Exception as e:
                     logger.error(f"Test error: {str(e)}")
         
-        logger.info(f"Results: {len(working)}/{len(configs)} working ({len(working)*100//max(1,len(configs))}%)")
+        logger.info(f"Results: {len(working)}/{len(configs)} working ({len(working)*100//max(1,len(configs))}%) - {skipped} skipped (unsupported)")
         return working
 
 
