@@ -10,8 +10,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class ConfigToSingbox:
-    def __init__(self, location_file: str, input_config_file: str):
-        self.input_file = input_config_file
+    def __init__(self, location_file: str):
         self.output_file = 'configs/singbox_configs.json'
         self.location_cache: Dict[str, tuple] = {}
         self.load_location_cache(location_file)
@@ -28,7 +27,7 @@ class ConfigToSingbox:
 
     def get_location(self, address: str) -> tuple:
         if address in self.location_cache:
-             return tuple(self.location_cache[address])
+            return tuple(self.location_cache[address])
         return ("🏳️", "Unknown")
 
     def decode_vmess(self, config: str) -> Optional[Dict]:
@@ -188,36 +187,24 @@ class ConfigToSingbox:
 
     def process_configs(self):
         try:
-            with open(self.input_file, 'r', encoding='utf-8') as f:
+            with open('configs/proxy_configs.txt', 'r', encoding='utf-8') as f:
                 configs = [line for line in f.read().strip().split('\n') if line.strip() and not line.strip().startswith('//')]
         except FileNotFoundError:
-            logger.error(f"{self.input_file} not found! Exiting.")
+            logger.error("proxy_configs.txt not found! Exiting.")
             return
         except Exception as e:
-            logger.error(f"Error reading {self.input_file}: {e}")
+            logger.error(f"Error reading proxy_configs.txt: {e}")
             return
 
         outbounds, valid_tags = [], []
-        counters = {"VLESS": 1, "Trojan": 1, "VMess": 1, "SS": 1, "Hysteria2": 1, "TUIC": 1}
-        protocol_map = {
-            'vless': 'VLESS', 
-            'trojan': 'Trojan', 
-            'vmess': 'VMess', 
-            'ss': 'SS', 
-            'hysteria2': 'Hysteria2', 
-            'hy2': 'Hysteria2',
-            'tuic': 'TUIC'
-        }
+        counters = {"VLESS": 1, "Trojan": 1, "VMess": 1, "SS": 1, "Hysteria2": 1}
+        protocol_map = {'vless': 'VLESS', 'trojan': 'Trojan', 'vmess': 'VMess', 'ss': 'SS', 'hysteria2': 'Hysteria2', 'hy2': 'Hysteria2'}
 
         for config in configs:
             protocol_key = config.split('://')[0].lower()
             protocol_name = protocol_map.get(protocol_key)
             
             if protocol_name:
-                if protocol_name == 'TUIC':
-                    logger.warning("TUIC protocol conversion to sing-box JSON is not supported in this script.")
-                    continue
-                
                 converted = self.convert_to_singbox(config, counters[protocol_name], protocol_name)
                 if converted:
                     outbounds.append(converted)
@@ -254,7 +241,7 @@ class ConfigToSingbox:
             "outbounds": [
                 {"type": "selector", "tag": "🌐 Anonymous Multi", "outbounds": ["👽 Best Ping 🚀"] + valid_tags + ["direct"]},
                 {"type": "direct", "tag": "direct"},
-                {"type": "urltest", "tag": "👽 Best Ping 🚀", "outbounds": valid_tags, "url": "https.www.gstatic.com/generate_204", "interrupt_exist_connections": False, "interval": "30s"}
+                {"type": "urltest", "tag": "👽 Best Ping 🚀", "outbounds": valid_tags, "url": "https://www.gstatic.com/generate_204", "interrupt_exist_connections": False, "interval": "30s"}
             ] + outbounds,
             "route": {
                 "rules": [
@@ -301,13 +288,12 @@ class ConfigToSingbox:
 
 
 def main():
-    if len(sys.argv) < 3:
-        print("Usage: python config_to_singbox.py <location.json> <input_configs.txt>")
+    if len(sys.argv) < 2:
+        print("Usage: python config_to_singbox.py <location.json>")
         sys.exit(1)
     
     location_file = sys.argv[1]
-    input_config_file = sys.argv[2]
-    converter = ConfigToSingbox(location_file, input_config_file)
+    converter = ConfigToSingbox(location_file)
     converter.process_configs()
 
 if __name__ == '__main__':
