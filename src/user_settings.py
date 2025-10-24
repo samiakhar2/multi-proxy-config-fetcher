@@ -15,7 +15,6 @@ SOURCE_URLS = [
     "https://raw.githubusercontent.com/arshiacomplus/v2rayExtractor/refs/heads/main/mix/sub.html",
     "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/proxies.txt",
     "https://raw.githubusercontent.com/darkvpnapp/CloudflarePlus/refs/heads/main/proxy",
-    # Add more URLs here if you want to include additional sources.
 ]
 
 # Set to True to fetch the maximum possible number of configurations.
@@ -42,24 +41,46 @@ ENABLED_PROTOCOLS = {
 # Configurations older than this will be considered invalid.
 MAX_CONFIG_AGE_DAYS = 5
 
-# --- Config Tester Settings ---
+# --- Sing-box Config Tester Settings ---
 
 # Set to True to enable testing of configs using sing-box.
 # If True, sing-box will be used to test all fetched configs and create a 'tested' config file.
 # If False, the testing step will be skipped.
-ENABLE_CONFIG_TESTER = True
+ENABLE_SINGBOX_TESTER = True
 
-# Number of parallel workers to use for testing configs.
+# Number of parallel workers to use for testing sing-box configs.
 # A higher number means faster testing but uses more CPU/RAM.
-TESTER_MAX_WORKERS = 8
+SINGBOX_TESTER_MAX_WORKERS = 8
 
-# Maximum time (in seconds) to wait for a config to respond during testing.
+# Maximum time (in seconds) to wait for a sing-box config to respond during testing.
 # Configs that take longer than this will be marked as failed.
-TESTER_TIMEOUT_SECONDS = 10
+SINGBOX_TESTER_TIMEOUT_SECONDS = 10
 
-# List of URLs to test configs against.
+# List of URLs to test sing-box configs against.
 # The tester will try each URL in order until one succeeds.
-TESTER_URLS = [
+SINGBOX_TESTER_URLS = [
+    'https://www.youtube.com/generate_204',
+    'https://www.gstatic.com/generate_204'
+]
+
+# --- Xray Config Tester Settings ---
+
+# Set to True to enable testing of configs using Xray core.
+# If True, Xray will be used to test all fetched configs before conversion and create a 'tested' config file.
+# If False, the testing step will be skipped.
+ENABLE_XRAY_TESTER = True
+
+# Number of parallel workers to use for testing Xray configs.
+# A higher number means faster testing but uses more CPU/RAM.
+XRAY_TESTER_MAX_WORKERS = 8
+
+# Maximum time (in seconds) to wait for an Xray config to respond during testing.
+# Configs that take longer than this will be marked as failed.
+XRAY_TESTER_TIMEOUT_SECONDS = 10
+
+# List of URLs to test Xray configs against.
+# The tester will try each URL in order until one succeeds.
+XRAY_TESTER_URLS = [
     'https://www.youtube.com/generate_204',
     'https://www.gstatic.com/generate_204'
 ]
