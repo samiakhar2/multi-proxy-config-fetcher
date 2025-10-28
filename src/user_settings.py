@@ -84,3 +84,34 @@ XRAY_TESTER_URLS = [
     'https://www.youtube.com/generate_204'
     #'https://www.gstatic.com/generate_204'
 ]
+
+# --- Location API Settings ---
+
+# List of free IP geolocation APIs to identify server countries.
+# The system tries APIs in order from top to bottom (first = highest priority).
+# If one API fails or is rate-limited, the system automatically tries the next one.
+#
+# HOW TO ADD AN API:
+# Simply add the domain name or full URL. Examples:
+#   freeipapi.com
+#   ip-api.com
+#   https://ipapi.co
+#   api.iplocation.net
+#
+# The system automatically detects the correct API format and endpoint.
+# No API key is required for the APIs listed below.
+#
+# RECOMMENDED FREE APIs (ranked by reliability and rate limits):
+#
+# 1. freeipapi.com - 60 requests/minute, very fast, no registration
+# 2. ip-api.com - 45 requests/minute, very reliable, widely used
+# 3. ipapi.co - 1000 requests/day (~30k/month), good accuracy
+# 4. ipwhois.app - 10000 requests/month, decent speed
+# 5. api.iplocation.net - unlimited, fast, accurate
+#
+LOCATION_APIS = [
+    'api.iplocation.net',
+    'freeipapi.com',
+    'ip-api.com',
+    'ipapi.co'
+]
