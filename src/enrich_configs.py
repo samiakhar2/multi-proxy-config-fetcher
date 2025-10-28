@@ -4,9 +4,10 @@ import socket
 import requests
 import sys
 import os
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, List
 from urllib.parse import urlparse, parse_qs
 import logging
+from user_settings import LOCATION_APIS
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -14,41 +15,175 @@ logger = logging.getLogger(__name__)
 class ConfigEnricher:
     def __init__(self):
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
         self.location_cache: Dict[str, Tuple[str, str]] = {}
+        self.location_apis = self._initialize_apis()
+        self.successful_patterns = {}
 
-    def get_location_from_ip_api(self, ip: str) -> Tuple[str, str]:
-        try:
-            response = requests.get(f'http://ip-api.com/json/{ip}', headers=self.headers, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('status') == 'success' and data.get('countryCode'):
-                    return data['countryCode'].lower(), data['country']
-        except requests.exceptions.RequestException as e:
-            logger.warning(f"ip-api.com failed: {e}")
-        return '', ''
+    def _clean_domain(self, api_input: str) -> str:
+        api_input = api_input.strip()
+        for prefix in ['https://', 'http://']:
+            if api_input.startswith(prefix):
+                api_input = api_input[len(prefix):]
+        api_input = api_input.rstrip('/')
+        if '/' in api_input:
+            api_input = api_input.split('/')[0]
+        return api_input.lower()
 
-    def get_location_from_ipapi_co(self, ip: str) -> Tuple[str, str]:
-        try:
-            response = requests.get(f'https://ipapi.co/{ip}/json/', headers=self.headers, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('country_code') and data.get('country_name'):
-                    return data['country_code'].lower(), data['country_name']
-        except requests.exceptions.RequestException as e:
-            logger.warning(f"ipapi.co failed: {e}")
-        return '', ''
+    def _generate_url_patterns(self, domain: str, ip: str) -> List[str]:
+        patterns = []
+        
+        protocols = ['https', 'http']
+        
+        path_templates = [
+            '?ip={ip}',
+            '/?ip={ip}',
+            '/{ip}',
+            '/{ip}/json',
+            '/{ip}/json/',
+            '/json/{ip}',
+            '/json?ip={ip}',
+            '/api/{ip}',
+            '/api/json/{ip}',
+            '/api?ip={ip}',
+            '/v1/{ip}',
+            '/v1/json/{ip}',
+            '/v2/{ip}',
+            '/lookup/{ip}',
+            '/geoip/{ip}',
+            '/locate/{ip}',
+            '/ip/{ip}',
+            '/query/{ip}',
+            '/{ip}.json',
+            '/ip-country?ip={ip}',
+            '?cmd=ip-country&ip={ip}'
+        ]
+        
+        for protocol in protocols:
+            for template in path_templates:
+                path = template.format(ip=ip)
+                patterns.append(f'{protocol}://{domain}{path}')
+        
+        return patterns
 
-    def get_location_from_ipwhois(self, ip: str) -> Tuple[str, str]:
+    def _extract_country_data(self, data: dict) -> Tuple[str, str]:
+        if not isinstance(data, dict):
+            return '', ''
+        
+        data_flat = {}
+        for key, value in data.items():
+            if value is not None:
+                data_flat[key.lower()] = value
+        
+        status_indicators = data_flat.get('status', '').lower()
+        if status_indicators in ['fail', 'error', 'failed']:
+            return '', ''
+        
+        if data_flat.get('error') or data_flat.get('error_message'):
+            return '', ''
+        
+        response_code = str(data_flat.get('response_code', ''))
+        if response_code and response_code != '200':
+            return '', ''
+        
+        country_code = ''
+        country_name = ''
+        
+        code_fields = [
+            'countrycode', 'country_code', 'country_code2', 
+            'country_iso_code', 'iso_code', 'cc', 'code', 
+            'country_iso', 'iso', 'countryisocode', 'cca2'
+        ]
+        
+        for field in code_fields:
+            if field in data_flat:
+                value = str(data_flat[field]).strip().upper()
+                if value and len(value) == 2 and value.isalpha():
+                    country_code = value.lower()
+                    break
+        
+        name_fields = [
+            'country', 'country_name', 'countryname', 'name', 
+            'country_long', 'countrylong', 'full_country_name'
+        ]
+        
+        for field in name_fields:
+            if field in data_flat:
+                value = str(data_flat[field]).strip()
+                if value and len(value) > 2 and not value.isdigit():
+                    country_name = value
+                    break
+        
+        return country_code, country_name
+
+    def _initialize_apis(self) -> List[Dict[str, str]]:
+        apis = []
+        for api_input in LOCATION_APIS:
+            try:
+                domain = self._clean_domain(api_input)
+                if domain:
+                    apis.append({
+                        'domain': domain,
+                        'original': api_input
+                    })
+                    logger.info(f"Registered API: {domain}")
+            except Exception as e:
+                logger.warning(f"Failed to register '{api_input}': {e}")
+        
+        if not apis:
+            logger.error("No location APIs configured!")
+        
+        return apis
+
+    def _test_url(self, url: str) -> Optional[dict]:
         try:
-            response = requests.get(f'https://ipwhois.app/json/{ip}', headers=self.headers, timeout=5)
+            response = requests.get(url, headers=self.headers, timeout=5, allow_redirects=True)
+            
             if response.status_code == 200:
-                data = response.json()
-                if data.get('country_code') and data.get('country'):
-                    return data['country_code'].lower(), data['country']
-        except requests.exceptions.RequestException as e:
-            logger.warning(f"ipwhois.app failed: {e}")
+                content_type = response.headers.get('content-type', '').lower()
+                
+                if 'json' in content_type or 'application/json' in content_type:
+                    try:
+                        return response.json()
+                    except json.JSONDecodeError:
+                        pass
+                else:
+                    try:
+                        return response.json()
+                    except:
+                        pass
+        except:
+            pass
+        
+        return None
+
+    def get_location_from_api(self, ip: str, api_config: dict) -> Tuple[str, str]:
+        domain = api_config['domain']
+        
+        if domain in self.successful_patterns:
+            cached_pattern = self.successful_patterns[domain]
+            url = cached_pattern.format(ip=ip)
+            data = self._test_url(url)
+            if data:
+                country_code, country_name = self._extract_country_data(data)
+                if country_code and country_name:
+                    return country_code, country_name
+        
+        url_patterns = self._generate_url_patterns(domain, ip)
+        
+        for url in url_patterns:
+            data = self._test_url(url)
+            if data:
+                country_code, country_name = self._extract_country_data(data)
+                
+                if country_code and country_name and len(country_code) == 2:
+                    template = url.replace(ip, '{ip}')
+                    self.successful_patterns[domain] = template
+                    logger.debug(f"Success: {domain} -> {template}")
+                    return country_code, country_name
+        
+        logger.debug(f"Failed: {domain} - no working pattern")
         return '', ''
 
     def get_location(self, address: str) -> tuple:
@@ -58,22 +193,23 @@ class ConfigEnricher:
         try:
             ip = socket.gethostbyname(address)
         except socket.gaierror:
-            logger.warning(f"Could not resolve hostname: {address}")
+            logger.warning(f"Cannot resolve: {address}")
             return "🏳️", "Unknown"
 
-        apis = [
-            self.get_location_from_ip_api,
-            self.get_location_from_ipapi_co,
-            self.get_location_from_ipwhois,
-        ]
-        
-        for api_func in apis:
-            country_code, country = api_func(ip)
+        for api_config in self.location_apis:
+            country_code, country = self.get_location_from_api(ip, api_config)
+            
             if country_code and country and len(country_code) == 2:
-                flag = ''.join(chr(ord('🇦') + ord(c.upper()) - ord('A')) for c in country_code)
+                try:
+                    flag = ''.join(chr(0x1F1E6 + ord(c.upper()) - ord('A')) for c in country_code)
+                except:
+                    flag = "🏳️"
+                
                 self.location_cache[address] = (flag, country)
+                logger.info(f"{address} -> {flag} {country} (via {api_config['domain']})")
                 return flag, country
         
+        logger.warning(f"Location unknown for {address}")
         self.location_cache[address] = ("🏳️", "Unknown")
         return "🏳️", "Unknown"
 
@@ -82,8 +218,7 @@ class ConfigEnricher:
             encoded = config.replace('vmess://', '')
             decoded = base64.b64decode(encoded).decode('utf-8')
             return json.loads(decoded)
-        except (json.JSONDecodeError, base64.Error, UnicodeDecodeError) as e:
-            logger.warning(f"Failed to decode vmess: {e}")
+        except:
             return None
 
     def parse_vless(self, config: str) -> Optional[Dict]:
@@ -94,8 +229,7 @@ class ConfigEnricher:
             netloc = url.netloc.split('@')[-1]
             address, port = netloc.split(':') if ':' in netloc else (netloc, '443')
             return {'address': address, 'port': int(port)}
-        except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(f"Failed to parse vless: {e}")
+        except:
             return None
 
     def parse_trojan(self, config: str) -> Optional[Dict]:
@@ -105,8 +239,7 @@ class ConfigEnricher:
                 return None
             port = url.port or 443
             return {'address': url.hostname, 'port': port}
-        except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(f"Failed to parse trojan: {e}")
+        except:
             return None
 
     def parse_hysteria2(self, config: str) -> Optional[Dict]:
@@ -115,8 +248,7 @@ class ConfigEnricher:
             if url.scheme.lower() not in ['hysteria2', 'hy2'] or not url.hostname or not url.port:
                 return None
             return {'address': url.hostname, 'port': url.port}
-        except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(f"Failed to parse hysteria2: {e}")
+        except:
             return None
 
     def parse_shadowsocks(self, config: str) -> Optional[Dict]:
@@ -127,8 +259,7 @@ class ConfigEnricher:
             server_parts = parts[1].split('#')[0]
             host, port = server_parts.split(':')
             return {'address': host, 'port': int(port)}
-        except (ValueError, TypeError, AttributeError, base64.Error, UnicodeDecodeError) as e:
-            logger.warning(f"Failed to parse shadowsocks: {e}")
+        except:
             return None
 
     def extract_address(self, config: str) -> Optional[str]:
@@ -161,8 +292,7 @@ class ConfigEnricher:
                     return data['address']
             
             return None
-        except Exception as e:
-            logger.error(f"Failed to extract address: {e}")
+        except:
             return None
 
     def process_configs(self, input_file: str, output_file: str):
@@ -191,8 +321,7 @@ class ConfigEnricher:
         logger.info(f"Found {len(unique_addresses)} unique server addresses")
 
         for address in unique_addresses:
-            flag, country = self.get_location(address)
-            logger.info(f"Resolved {address} -> {flag} {country}")
+            self.get_location(address)
 
         try:
             os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
