@@ -4,8 +4,10 @@ from datetime import datetime
 
 def generate_basic_svg(stats_data):
     channels = stats_data.get('channels', [])
+    sorted_channels = sorted(channels, key=lambda x: x['metrics']['overall_score'], reverse=True)
+    
     width = 800
-    height = len(channels) * 50 + 100
+    height = len(sorted_channels) * 50 + 100
     
     svg = f'''<?xml version="1.0" encoding="UTF-8"?>
     <svg width="{width}" height="{height}" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -15,7 +17,7 @@ def generate_basic_svg(stats_data):
     </style>
     <text x="400" y="40" text-anchor="middle" font-size="20px" font-weight="bold" fill="#64748b">Channel Performance Overview</text>'''
     
-    for idx, channel in enumerate(channels):
+    for idx, channel in enumerate(sorted_channels):
         y = 80 + (idx * 50)
         name = channel['url'].split('/')[-1]
         score = channel['metrics']['overall_score']
@@ -37,6 +39,8 @@ def generate_basic_svg(stats_data):
 
 def generate_html_report(stats_data):
     channels = stats_data.get('channels', [])
+    sorted_channels = sorted(channels, key=lambda x: x['metrics']['overall_score'], reverse=True)
+    
     total_channels = len(channels)
     active_channels_count = sum(1 for c in channels if c['enabled'])
     total_valid_configs = sum(c['metrics']['valid_configs'] for c in channels)
@@ -130,7 +134,7 @@ def generate_html_report(stats_data):
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">'''
 
-    for channel in sorted(channels, key=lambda x: x['metrics']['overall_score'], reverse=True):
+    for channel in sorted_channels:
         success_rate = (channel['metrics']['success_count'] / 
                        max(1, channel['metrics']['success_count'] + channel['metrics']['fail_count'])) * 100
         
