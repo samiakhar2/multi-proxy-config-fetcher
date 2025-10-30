@@ -16,6 +16,13 @@ You can directly access the latest v2ray/Xray configurations through this URL:
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs.txt
 ```
+
+### Xray Configurations (Tested and Healthy)
+Access configurations that have successfully passed real-time health checks using the Xray core via this URL:
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs_tested.txt
+```
+
 This project features advanced capabilities for proxy configuration management. The retrieved configurations are automatically converted to Sing-box format and stored in a separate JSON file. For each server, its geographical location is identified using the get location method, and the corresponding flag emoji and country name are automatically added to its tag. These features make proxy management and usage significantly more user-friendly and efficient.
 
 This project now includes the latest Sing-box core for **real-time configuration health testing and verification**.
