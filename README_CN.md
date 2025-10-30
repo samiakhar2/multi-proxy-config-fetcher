@@ -135,28 +135,6 @@ python src/fetch_configs.py
 2. 选择 **Allow all actions and reusable workflows**。
 3. 保存设置。
 
-## 项目结构
-
-```
-├── src/
-│   ├── config.py              # 项目配置
-│   ├── config_validator.py    # 配置验证和校验
-│   ├── fetch_configs.py       # 主获取器实现
-│   ├── config_to_singbox.py   # Sing-box 格式转换器
-│   └── config_tester.py       # 配置测试器
-├── configs/
-│   ├── proxy_configs.txt      # 原始代理配置
-│   ├── singbox_configs_all.json    # 所有 Sing-box 配置
-│   ├── singbox_configs_tested.json # 测试过的 Sing-box 配置
-│   └── channel_stats.json     # 源性能统计
-├── assets/
-│   ├── channel_stats_chart.svg     # 性能图表
-│   └── performance_report.html     # 交互式仪表盘
-└── .github/
-    └── workflows/
-        └── update-configs.yml # GitHub Actions 工作流
-```
-
 ## 源统计
 
 项目在 `configs/channel_stats.json` 中跟踪每个源的综合性能指标：
