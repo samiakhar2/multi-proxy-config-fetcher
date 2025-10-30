@@ -16,7 +16,6 @@ You can directly access the latest v2ray/Xray configurations through this URL:
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs.txt
 ```
-
 ### Xray Configurations (Tested and Healthy)
 Access configurations that have successfully passed real-time health checks using the Xray core via this URL:
 ```
