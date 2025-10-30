@@ -135,28 +135,6 @@ If you fork this repository, you need to manually enable GitHub Actions:
 2. Select **Allow all actions and reusable workflows**.
 3. Save the settings.
 
-## Project Structure
-
-```
-├── src/
-│   ├── config.py              # Project configuration
-│   ├── config_validator.py    # Config validation and verification
-│   ├── fetch_configs.py       # Main fetcher implementation
-│   ├── config_to_singbox.py   # Sing-box format converter
-│   └── config_tester.py       # Configuration tester
-├── configs/
-│   ├── proxy_configs.txt      # Raw proxy configurations
-│   ├── singbox_configs_all.json    # All Sing-box configurations
-│   ├── singbox_configs_tested.json # Tested Sing-box configurations
-│   └── channel_stats.json     # Source performance stats
-├── assets/
-│   ├── channel_stats_chart.svg     # Performance chart
-│   └── performance_report.html     # Interactive dashboard
-└── .github/
-    └── workflows/
-        └── update-configs.yml # GitHub Actions workflow
-```
-
 ## Source Statistics
 
 The project tracks comprehensive performance metrics of each source in `configs/channel_stats.json`:
