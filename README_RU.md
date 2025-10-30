@@ -135,28 +135,6 @@ python src/fetch_configs.py
 2. Выберите **Allow all actions and reusable workflows**.
 3. Сохраните настройки.
 
-## Структура проекта
-
-```
-├── src/
-│   ├── config.py              # Конфигурация проекта
-│   ├── config_validator.py    # Валидация и проверка конфигураций
-│   ├── fetch_configs.py       # Основная реализация сборщика
-│   ├── config_to_singbox.py   # Конвертер формата Sing-box
-│   └── config_tester.py       # Тестировщик конфигураций
-├── configs/
-│   ├── proxy_configs.txt      # Исходные конфигурации прокси
-│   ├── singbox_configs_all.json    # Все конфигурации Sing-box
-│   ├── singbox_configs_tested.json # Протестированные конфигурации Sing-box
-│   └── channel_stats.json     # Статистика производительности источников
-├── assets/
-│   ├── channel_stats_chart.svg     # График производительности
-│   └── performance_report.html     # Интерактивная панель
-└── .github/
-    └── workflows/
-        └── update-configs.yml # Рабочий процесс GitHub Actions
-```
-
 ## Статистика источников
 
 Проект отслеживает комплексные метрики производительности каждого источника в `configs/channel_stats.json`:
