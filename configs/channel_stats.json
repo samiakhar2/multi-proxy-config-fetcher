@@ -1,24 +1,24 @@
 {
-  "timestamp": "2025-10-31T01:57:00.378377+00:00",
+  "timestamp": "2025-10-31T12:53:15.822224+00:00",
   "channels": [
     {
       "url": "https://t.me/s/MARAMBASHI",
       "enabled": true,
       "metrics": {
         "total_configs": 57,
-        "valid_configs": 28,
-        "unique_configs": 28,
-        "avg_response_time": 0.59,
+        "valid_configs": 31,
+        "unique_configs": 31,
+        "avg_response_time": 0.77,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 86.4,
-        "last_success": "2025-10-31T01:54:05.957469+00:00",
+        "overall_score": 87.44,
+        "last_success": "2025-10-31T12:50:20.972504+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
-          "vless://": 25,
+          "vless://": 29,
           "vmess://": 0,
-          "ss://": 3,
+          "ss://": 2,
           "trojan://": 0,
           "tuic://": 0
         }
@@ -28,14 +28,14 @@
       "url": "https://t.me/s/AZARBAYJAB1",
       "enabled": true,
       "metrics": {
-        "total_configs": 73,
+        "total_configs": 61,
         "valid_configs": 16,
         "unique_configs": 16,
-        "avg_response_time": 0.34,
+        "avg_response_time": 0.44,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 79.97,
-        "last_success": "2025-10-31T01:54:08.354847+00:00",
+        "overall_score": 80.89,
+        "last_success": "2025-10-31T12:50:23.480681+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
@@ -51,7 +51,7 @@
       "url": "https://t.me/s/Ln2Ray",
       "enabled": false,
       "metrics": {
-        "total_configs": 1,
+        "total_configs": 0,
         "valid_configs": 0,
         "unique_configs": 0,
         "avg_response_time": 0,
@@ -74,14 +74,14 @@
       "url": "https://t.me/s/ShadowProxy66",
       "enabled": true,
       "metrics": {
-        "total_configs": 15,
+        "total_configs": 8,
         "valid_configs": 5,
         "unique_configs": 5,
-        "avg_response_time": 0.28,
+        "avg_response_time": 0.42,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 82.91,
-        "last_success": "2025-10-31T01:54:13.050733+00:00",
+        "overall_score": 90.0,
+        "last_success": "2025-10-31T12:50:28.425861+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
