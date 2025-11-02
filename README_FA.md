@@ -23,6 +23,11 @@ https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/head
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs_tested.txt
 ```
+### پیکربندی‌های لودبالانس شده Xray (تست شده)
+دسترسی به پیکربندی‌هایی که با هسته Xray تست شده‌اند و برای لودبالانس بهینه‌سازی شده‌اند، با قابلیت انتخاب خودکار بهترین کانفیگ بر اساس پینگ، از طریق این URL:
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/xray_loadbalanced_config.json
+```
 
 این پروژه دارای قابلیت‌های پیشرفته‌ای برای مدیریت کانفیگ‌های پروکسی است. کانفیگ‌های دریافت شده به صورت خودکار به فرمت Sing-box تبدیل می‌شوند و در یک فایل JSON جداگانه ذخیره می‌شوند. برای هر سرور، موقعیت جغرافیایی آن با استفاده از متد get location شناسایی شده و به صورت خودکار ایموجی پرچم و نام کشور مربوطه به تگ آن اضافه می‌شود. این ویژگی‌ها باعث می‌شود مدیریت و استفاده از پروکسی‌ها برای کاربران بسیار ساده‌تر شود.
 
