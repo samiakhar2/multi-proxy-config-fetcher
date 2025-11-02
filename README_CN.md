@@ -21,6 +21,11 @@ https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/head
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs_tested.txt
 ```
+### Xray 负载均衡配置（已测试）
+通过此 URL 访问已经过 Xray 核心测试并针对负载均衡进行了优化的配置，可根据延迟自动选择最佳配置：
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/xray_loadbalanced_config.json
+```
 
 该项目具有高级代理配置管理功能。获取的配置会自动转换为 Sing-box 格式并存储在单独的 JSON 文件中。对于每个服务器，系统使用 get location 方法识别其地理位置，并自动将相应的国旗表情符号和国家名称添加到其标签中。这些功能使代理管理和使用变得更加用户友好和高效。
 
