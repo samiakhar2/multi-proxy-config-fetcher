@@ -21,6 +21,11 @@ Access configurations that have successfully passed real-time health checks usin
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs_tested.txt
 ```
+### Xray Load-balanced Configurations (Tested)
+Access configurations that have been tested with Xray core and optimized for load balancing, with automatic selection of the best performing config based on ping, via this URL:
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/xray_loadbalanced_config.json
+```
 
 This project features advanced capabilities for proxy configuration management. The retrieved configurations are automatically converted to Sing-box format and stored in a separate JSON file. For each server, its geographical location is identified using the get location method, and the corresponding flag emoji and country name are automatically added to its tag. These features make proxy management and usage significantly more user-friendly and efficient.
 
