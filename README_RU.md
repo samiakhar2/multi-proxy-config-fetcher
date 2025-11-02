@@ -21,6 +21,11 @@ https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/head
 ```
 https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs_tested.txt
 ```
+### Конфигурации Xray с балансировкой нагрузки (Протестированные)
+Получите доступ к конфигурациям, протестированным с помощью ядра Xray и оптимизированным для балансировки нагрузки, с автоматическим выбором лучшей конфигурации на основе пинга, по этому URL:
+```
+https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/xray_loadbalanced_config.json
+```
 
 Этот проект обладает расширенными возможностями управления конфигурациями прокси. Полученные конфигурации автоматически конвертируются в формат Sing-box и сохраняются в отдельном JSON-файле. Для каждого сервера определяется его географическое положение с помощью метода get location, а соответствующий эмодзи флага и название страны автоматически добавляются к его тегу. Эти функции делают управление и использование прокси значительно более удобным и эффективным.
 
