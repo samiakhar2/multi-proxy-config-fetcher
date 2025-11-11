@@ -14,6 +14,7 @@ import base64
 from urllib.parse import urlparse, parse_qs
 from contextlib import closing
 from config import ProxyConfig
+import config_parser as parser
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -45,9 +46,8 @@ class XrayTester:
             config_lower = config_str.lower()
             
             if config_lower.startswith('vmess://'):
-                encoded = config_str.replace('vmess://', '')
-                decoded = base64.b64decode(encoded).decode('utf-8')
-                data = json.loads(decoded)
+                data = parser.decode_vmess(config_str)
+                if not data: return None
                 
                 outbound = {
                     "protocol": "vmess",
@@ -85,107 +85,95 @@ class XrayTester:
                 return outbound
             
             elif config_lower.startswith('vless://'):
-                url = urlparse(config_str)
-                netloc = url.netloc.split('@')[-1]
-                address, port = netloc.split(':') if ':' in netloc else (netloc, '443')
-                params = parse_qs(url.query)
+                data = parser.parse_vless(config_str)
+                if not data: return None
                 
                 outbound = {
                     "protocol": "vless",
                     "settings": {
                         "vnext": [{
-                            "address": address,
-                            "port": int(port),
+                            "address": data['address'],
+                            "port": data['port'],
                             "users": [{
-                                "id": url.username,
+                                "id": data['uuid'],
                                 "encryption": "none",
-                                "flow": params.get('flow', [''])[0]
+                                "flow": data.get('flow', '')
                             }]
                         }]
                     }
                 }
                 
-                net_type = params.get('type', ['tcp'])[0]
+                net_type = data.get('type', 'tcp')
                 if net_type == 'ws':
                     outbound["streamSettings"] = {
                         "network": "ws",
                         "wsSettings": {
-                            "path": params.get('path', ['/'])[0],
-                            "headers": {"Host": params.get('host', [address])[0]}
+                            "path": data.get('path', '/'),
+                            "headers": {"Host": data.get('host', data['address'])}
                         }
                     }
                     
-                security = params.get('security', ['none'])[0]
+                security = data.get('security', 'none')
                 if security == 'tls':
                     if "streamSettings" not in outbound:
                         outbound["streamSettings"] = {"network": "tcp"}
                     outbound["streamSettings"]["security"] = "tls"
                     outbound["streamSettings"]["tlsSettings"] = {
-                        "serverName": params.get('sni', [address])[0],
+                        "serverName": data.get('sni', data['address']),
                         "allowInsecure": False
                     }
                     
                 return outbound
                 
             elif config_lower.startswith('trojan://'):
-                url = urlparse(config_str)
-                port = url.port or 443
-                params = parse_qs(url.query)
+                data = parser.parse_trojan(config_str)
+                if not data: return None
                 
                 outbound = {
                     "protocol": "trojan",
                     "settings": {
                         "servers": [{
-                            "address": url.hostname,
-                            "port": port,
-                            "password": url.username
+                            "address": data['address'],
+                            "port": data['port'],
+                            "password": data['password']
                         }]
                     },
                     "streamSettings": {
-                        "network": params.get('type', ['tcp'])[0],
+                        "network": data.get('type', 'tcp'),
                         "security": "tls",
                         "tlsSettings": {
-                            "serverName": params.get('sni', [url.hostname])[0],
+                            "serverName": data.get('sni', data['address']),
                             "allowInsecure": False
                         }
                     }
                 }
                 
-                if params.get('type', ['tcp'])[0] == 'ws':
+                if data.get('type', 'tcp') == 'ws':
                     outbound["streamSettings"]["wsSettings"] = {
-                        "path": params.get('path', ['/'])[0],
-                        "headers": {"Host": params.get('host', [url.hostname])[0]}
+                        "path": data.get('path', '/'),
+                        "headers": {"Host": data.get('host', data['address'])}
                     }
                     
                 return outbound
                 
             elif config_lower.startswith('ss://'):
-                parts = config_str.replace('ss://', '').split('@')
-                if len(parts) != 2:
-                    return None
-                    
-                method_pass_b64 = parts[0].replace('-', '+').replace('_', '/')
-                padding = '=' * (-len(method_pass_b64) % 4)
-                method_pass = base64.b64decode(method_pass_b64 + padding).decode('utf-8')
-                method, password = method_pass.split(':')
-                
-                server_parts = parts[1].split('#')[0]
-                host, port = server_parts.split(':')
+                data = parser.parse_shadowsocks(config_str)
+                if not data: return None
                 
                 outbound = {
                     "protocol": "shadowsocks",
                     "settings": {
                         "servers": [{
-                            "address": host,
-                            "port": int(port),
-                            "method": method,
-                            "password": password
+                            "address": data['address'],
+                            "port": data['port'],
+                            "method": data['method'],
+                            "password": data['password']
                         }]
                     }
                 }
                 
                 return outbound
-                
+            
             return None
             
         except Exception as e:
@@ -233,6 +221,7 @@ class XrayTester:
             http_port = find_free_port()
             
             xray_config = self.create_xray_config(outbound, socks_port, http_port)
+            
             
             fd, config_file = tempfile.mkstemp(suffix='.json', text=True)
             with os.fdopen(fd, 'w') as f:
@@ -332,6 +321,7 @@ class ParallelXrayTester:
                 config = futures[future]
                 tested += 1
                 
+                
                 try:
                     success, delay, config_str = future.result()
                     if success:
@@ -378,6 +368,7 @@ def main():
     test_urls = config_settings.XRAY_TESTER_URLS
     
     logger.info(f"Loading configs from {input_file}")
+    
     
     with open(input_file, 'r', encoding='utf-8') as f:
         lines = f.readlines()
