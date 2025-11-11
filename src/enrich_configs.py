@@ -8,6 +8,7 @@ from typing import Dict, Optional, Tuple, List
 from urllib.parse import urlparse, parse_qs
 import logging
 from user_settings import LOCATION_APIS
+import config_parser as parser
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -213,83 +214,30 @@ class ConfigEnricher:
         self.location_cache[address] = ("🏳️", "Unknown")
         return "🏳️", "Unknown"
 
-    def decode_vmess(self, config: str) -> Optional[Dict]:
-        try:
-            encoded = config.replace('vmess://', '')
-            decoded = base64.b64decode(encoded).decode('utf-8')
-            return json.loads(decoded)
-        except:
-            return None
-
-    def parse_vless(self, config: str) -> Optional[Dict]:
-        try:
-            url = urlparse(config)
-            if url.scheme.lower() != 'vless' or not url.hostname:
-                return None
-            netloc = url.netloc.split('@')[-1]
-            address, port = netloc.split(':') if ':' in netloc else (netloc, '443')
-            return {'address': address, 'port': int(port)}
-        except:
-            return None
-
-    def parse_trojan(self, config: str) -> Optional[Dict]:
-        try:
-            url = urlparse(config)
-            if url.scheme.lower() != 'trojan' or not url.hostname:
-                return None
-            port = url.port or 443
-            return {'address': url.hostname, 'port': port}
-        except:
-            return None
-
-    def parse_hysteria2(self, config: str) -> Optional[Dict]:
-        try:
-            url = urlparse(config)
-            if url.scheme.lower() not in ['hysteria2', 'hy2'] or not url.hostname or not url.port:
-                return None
-            return {'address': url.hostname, 'port': url.port}
-        except:
-            return None
-
-    def parse_shadowsocks(self, config: str) -> Optional[Dict]:
-        try:
-            parts = config.replace('ss://', '').split('@')
-            if len(parts) != 2:
-                return None
-            server_parts = parts[1].split('#')[0]
-            host, port = server_parts.split(':')
-            return {'address': host, 'port': int(port)}
-        except:
-            return None
-
     def extract_address(self, config: str) -> Optional[str]:
         try:
             config_lower = config.lower()
+            data = None
             
             if config_lower.startswith('vmess://'):
-                data = self.decode_vmess(config)
+                data = parser.decode_vmess(config)
                 if data and 'add' in data:
                     return data['add']
             
             elif config_lower.startswith('vless://'):
-                data = self.parse_vless(config)
-                if data:
-                    return data['address']
+                data = parser.parse_vless(config)
             
             elif config_lower.startswith('trojan://'):
-                data = self.parse_trojan(config)
-                if data:
-                    return data['address']
+                data = parser.parse_trojan(config)
             
             elif config_lower.startswith(('hysteria2://', 'hy2://')):
-                data = self.parse_hysteria2(config)
-                if data:
-                    return data['address']
+                data = parser.parse_hysteria2(config)
             
             elif config_lower.startswith('ss://'):
-                data = self.parse_shadowsocks(config)
-                if data:
-                    return data['address']
+                data = parser.parse_shadowsocks(config)
+            
+            if data and 'address' in data:
+                return data['address']
             
             return None
         except:
