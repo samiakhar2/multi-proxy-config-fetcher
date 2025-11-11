@@ -5,130 +5,25 @@ import os
 from typing import Dict, Optional
 from urllib.parse import urlparse, parse_qs
 import logging
+import config_parser as parser
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 class ConfigToSingbox:
-    def __init__(self, location_file: str):
+    def __init__(self):
         self.output_file = 'configs/singbox_configs.json'
-        self.location_cache: Dict[str, tuple] = {}
-        self.load_location_cache(location_file)
-
-    def load_location_cache(self, location_file: str):
-        try:
-            with open(location_file, 'r', encoding='utf-8') as f:
-                self.location_cache = json.load(f)
-            logger.info(f"Loaded {len(self.location_cache)} location entries from cache")
-        except FileNotFoundError:
-            logger.error(f"{location_file} not found!")
-        except Exception as e:
-            logger.error(f"Error loading location cache: {e}")
-
-    def get_location(self, address: str) -> tuple:
-        if address in self.location_cache:
-            return tuple(self.location_cache[address])
-        return ("🏳️", "Unknown")
-
-    def decode_vmess(self, config: str) -> Optional[Dict]:
-        try:
-            encoded = config.replace('vmess://', '')
-            decoded = base64.b64decode(encoded).decode('utf-8')
-            return json.loads(decoded)
-        except (json.JSONDecodeError, base64.Error, UnicodeDecodeError) as e:
-            logger.warning(f"Failed to decode vmess: {e}")
-            return None
-
-    def parse_vless(self, config: str) -> Optional[Dict]:
-        try:
-            url = urlparse(config)
-            if url.scheme.lower() != 'vless' or not url.hostname:
-                return None
-            netloc = url.netloc.split('@')[-1]
-            address, port = netloc.split(':') if ':' in netloc else (netloc, '443')
-            params = parse_qs(url.query)
-            return {
-                'uuid': url.username,
-                'address': address,
-                'port': int(port),
-                'flow': params.get('flow', [''])[0],
-                'sni': params.get('sni', [address])[0],
-                'type': params.get('type', ['tcp'])[0],
-                'path': params.get('path', [''])[0],
-                'host': params.get('host', [address])[0],
-                'security': params.get('security', ['none'])[0]
-            }
-        except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(f"Failed to parse vless: {e}")
-            return None
-
-    def parse_trojan(self, config: str) -> Optional[Dict]:
-        try:
-            url = urlparse(config)
-            if url.scheme.lower() != 'trojan' or not url.hostname:
-                return None
-            port = url.port or 443
-            params = parse_qs(url.query)
-            return {
-                'password': url.username,
-                'address': url.hostname,
-                'port': port,
-                'sni': params.get('sni', [url.hostname])[0],
-                'alpn': params.get('alpn', [''])[0],
-                'type': params.get('type', ['tcp'])[0],
-                'path': params.get('path', [''])[0],
-                'host': params.get('host', [url.hostname])[0]
-            }
-        except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(f"Failed to parse trojan: {e}")
-            return None
-
-    def parse_hysteria2(self, config: str) -> Optional[Dict]:
-        try:
-            url = urlparse(config)
-            if url.scheme.lower() not in ['hysteria2', 'hy2'] or not url.hostname or not url.port:
-                return None
-            query = dict(pair.split('=') for pair in url.query.split('&')) if url.query else {}
-            return {
-                'address': url.hostname,
-                'port': url.port,
-                'password': url.username or query.get('password', ''),
-                'sni': query.get('sni', url.hostname)
-            }
-        except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(f"Failed to parse hysteria2: {e}")
-            return None
-
-    def parse_shadowsocks(self, config: str) -> Optional[Dict]:
-        try:
-            parts = config.replace('ss://', '').split('@')
-            if len(parts) != 2:
-                return None
-            method_pass_b64 = parts[0].replace('-', '+').replace('_', '/')
-            padding = '=' * (-len(method_pass_b64) % 4)
-            method_pass = base64.b64decode(method_pass_b64 + padding).decode('utf-8')
-            method, password = method_pass.split(':')
-            server_parts = parts[1].split('#')[0]
-            host, port = server_parts.split(':')
-            return {
-                'method': method,
-                'password': password,
-                'address': host,
-                'port': int(port)
-            }
-        except (ValueError, TypeError, AttributeError, base64.Error, UnicodeDecodeError) as e:
-            logger.warning(f"Failed to parse shadowsocks: {e}")
-            return None
 
     def convert_to_singbox(self, config: str, index: int, protocol_type: str) -> Optional[Dict]:
         try:
             config_lower = config.lower()
             if config_lower.startswith('vmess://'):
-                data = self.decode_vmess(config)
+                data = parser.decode_vmess(config)
                 if not data or not all(k in data for k in ['add', 'port', 'id']):
                     return None
-                flag, country = self.get_location(data['add'])
-                tag = f"{flag} {index} - {protocol_type} - {country} : {data['port']}"
+                
+                tag = data.get('name') or f"{protocol_type} {index} - {data['add']}:{data['port']}"
+                
                 transport = {}
                 if data.get('net') == 'ws':
                     transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['add'])}}
@@ -140,10 +35,11 @@ class ConfigToSingbox:
                 return {"type": "vmess", "tag": tag, "server": data['add'], "server_port": int(data['port']), "uuid": data['id'], "security": data.get('scy', 'auto'), "alter_id": int(data.get('aid', 0)), "transport": transport, "tls": tls}
             
             elif config_lower.startswith('vless://'):
-                data = self.parse_vless(config)
+                data = parser.parse_vless(config)
                 if not data: return None
-                flag, country = self.get_location(data['address'])
-                tag = f"{flag} {index} - {protocol_type} - {country} : {data['port']}"
+
+                tag = data.get('name') or f"{protocol_type} {index} - {data['address']}:{data['port']}"
+
                 transport = {}
                 if data['type'] == 'ws':
                     transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['address'])}}
@@ -156,28 +52,32 @@ class ConfigToSingbox:
                 return {"type": "vless", "tag": tag, "server": data['address'], "server_port": data['port'], "uuid": data['uuid'], "flow": data.get('flow', ''), "tls": tls, "transport": transport}
             
             elif config_lower.startswith('trojan://'):
-                data = self.parse_trojan(config)
+                data = parser.parse_trojan(config)
                 if not data: return None
-                flag, country = self.get_location(data['address'])
-                tag = f"{flag} {index} - {protocol_type} - {country} : {data['port']}"
+                
+                tag = data.get('name') or f"{protocol_type} {index} - {data['address']}:{data['port']}"
+
                 transport = {}
                 if data['type'] == 'ws':
                     transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['address'])}}
+            
                 tls = {"enabled": True, "server_name": data['sni'], "insecure": False, "alpn": ["http/1.1"], "record_fragment": False, "utls": {"enabled": True, "fingerprint": "chrome"}}
                 return {"type": "trojan", "tag": tag, "server": data['address'], "server_port": data['port'], "password": data['password'], "tls": tls, "transport": transport}
             
             elif config_lower.startswith(('hysteria2://', 'hy2://')):
-                data = self.parse_hysteria2(config)
+                data = parser.parse_hysteria2(config)
                 if not data: return None
-                flag, country = self.get_location(data['address'])
-                tag = f"{flag} {index} - {protocol_type} - {country} : {data['port']}"
+                
+                tag = data.get('name') or f"{protocol_type} {index} - {data['address']}:{data['port']}"
+                
                 return {"type": "hysteria2", "tag": tag, "server": data['address'], "server_port": data['port'], "password": data['password'], "tls": {"enabled": True, "insecure": True, "server_name": data['sni']}}
-            
+         
             elif config_lower.startswith('ss://'):
-                data = self.parse_shadowsocks(config)
+                data = parser.parse_shadowsocks(config)
                 if not data: return None
-                flag, country = self.get_location(data['address'])
-                tag = f"{flag} {index} - {protocol_type} - {country} : {data['port']}"
+                
+                tag = data.get('name') or f"{protocol_type} {index} - {data['address']}:{data['port']}"
+                
                 return {"type": "shadowsocks", "tag": tag, "server": data['address'], "server_port": data['port'], "method": data['method'], "password": data['password']}
             
             return None
@@ -288,12 +188,11 @@ class ConfigToSingbox:
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python config_to_singbox.py <location.json>")
-        sys.exit(1)
-    
-    location_file = sys.argv[1]
-    converter = ConfigToSingbox(location_file)
+    if len(sys.argv) > 1:
+        print("Usage: python config_to_singbox.py")
+        print("This script no longer requires a location file argument.")
+
+    converter = ConfigToSingbox()
     converter.process_configs()
 
 if __name__ == '__main__':
