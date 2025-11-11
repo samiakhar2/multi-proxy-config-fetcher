@@ -62,13 +62,13 @@ jobs:
     - name: Rename configs
       run: python src/rename_configs.py configs/location_cache.json configs/proxy_configs.txt configs/proxy_configs.txt
       continue-on-error: true
-     
+    
     - name: Test configs with Xray
       run: python src/xray_config_tester.py configs/proxy_configs.txt configs/proxy_configs_tested.txt
       continue-on-error: true
     
     - name: Convert configs to sing-box format
-      run: python src/config_to_singbox.py configs/location_cache.json
+      run: python src/config_to_singbox.py
     
     - name: Backup original sing-box config
       run: |
