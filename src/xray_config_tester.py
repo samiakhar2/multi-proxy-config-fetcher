@@ -15,6 +15,7 @@ from urllib.parse import urlparse, parse_qs
 from contextlib import closing
 from config import ProxyConfig
 import config_parser as parser
+import transport_builder
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -44,11 +45,12 @@ class XrayTester:
     def parse_config_string(self, config_str: str) -> Optional[Dict]:
         try:
             config_lower = config_str.lower()
+            data = None
+            outbound = None
             
             if config_lower.startswith('vmess://'):
                 data = parser.decode_vmess(config_str)
                 if not data: return None
-                
                 outbound = {
                     "protocol": "vmess",
                     "settings": {
@@ -61,33 +63,13 @@ class XrayTester:
                                 "security": data.get('scy', 'auto')
                             }]
                         }]
-                    }
+                    },
+                    "streamSettings": transport_builder.build_xray_settings(data)
                 }
-                
-                if data.get('net') == 'ws':
-                    outbound["streamSettings"] = {
-                        "network": "ws",
-                        "wsSettings": {
-                            "path": data.get('path', '/'),
-                            "headers": {"Host": data.get('host', data['add'])}
-                        }
-                    }
-                    
-                if data.get('tls') == 'tls':
-                    if "streamSettings" not in outbound:
-                        outbound["streamSettings"] = {}
-                    outbound["streamSettings"]["security"] = "tls"
-                    outbound["streamSettings"]["tlsSettings"] = {
-                        "serverName": data.get('sni', data['add']),
-                        "allowInsecure": False
-                    }
-                    
-                return outbound
             
             elif config_lower.startswith('vless://'):
                 data = parser.parse_vless(config_str)
                 if not data: return None
-                
                 outbound = {
                     "protocol": "vless",
                     "settings": {
@@ -100,35 +82,13 @@ class XrayTester:
                                 "flow": data.get('flow', '')
                             }]
                         }]
-                    }
+                    },
+                    "streamSettings": transport_builder.build_xray_settings(data)
                 }
-                
-                net_type = data.get('type', 'tcp')
-                if net_type == 'ws':
-                    outbound["streamSettings"] = {
-                        "network": "ws",
-                        "wsSettings": {
-                            "path": data.get('path', '/'),
-                            "headers": {"Host": data.get('host', data['address'])}
-                        }
-                    }
-                    
-                security = data.get('security', 'none')
-                if security == 'tls':
-                    if "streamSettings" not in outbound:
-                        outbound["streamSettings"] = {"network": "tcp"}
-                    outbound["streamSettings"]["security"] = "tls"
-                    outbound["streamSettings"]["tlsSettings"] = {
-                        "serverName": data.get('sni', data['address']),
-                        "allowInsecure": False
-                    }
-                    
-                return outbound
                 
             elif config_lower.startswith('trojan://'):
                 data = parser.parse_trojan(config_str)
                 if not data: return None
-                
                 outbound = {
                     "protocol": "trojan",
                     "settings": {
@@ -138,28 +98,12 @@ class XrayTester:
                             "password": data['password']
                         }]
                     },
-                    "streamSettings": {
-                        "network": data.get('type', 'tcp'),
-                        "security": "tls",
-                        "tlsSettings": {
-                            "serverName": data.get('sni', data['address']),
-                            "allowInsecure": False
-                        }
-                    }
+                    "streamSettings": transport_builder.build_xray_settings(data)
                 }
-                
-                if data.get('type', 'tcp') == 'ws':
-                    outbound["streamSettings"]["wsSettings"] = {
-                        "path": data.get('path', '/'),
-                        "headers": {"Host": data.get('host', data['address'])}
-                    }
-                    
-                return outbound
                 
             elif config_lower.startswith('ss://'):
                 data = parser.parse_shadowsocks(config_str)
                 if not data: return None
-                
                 outbound = {
                     "protocol": "shadowsocks",
                     "settings": {
@@ -171,10 +115,8 @@ class XrayTester:
                         }]
                     }
                 }
-                
-                return outbound
             
-            return None
+            return outbound
             
         except Exception as e:
             logger.warning(f"Failed to parse config: {str(e)}")
