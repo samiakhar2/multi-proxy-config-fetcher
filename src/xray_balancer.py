@@ -7,6 +7,7 @@ import re
 from typing import Dict, Optional, List
 from urllib.parse import urlparse, parse_qs, unquote
 import config_parser as parser
+import transport_builder
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -176,26 +177,8 @@ class ConfigToXray:
                     }
                 ]
             },
-            "streamSettings": {
-                "network": data.get('net', 'tcp'),
-                "security": data.get('tls', 'none')
-            }
+            "streamSettings": transport_builder.build_xray_settings(data)
         }
-
-        if data.get('net') == 'ws':
-            outbound["streamSettings"]["wsSettings"] = {
-                "path": data.get('path', '/'),
-                "headers": {"Host": data.get('host', data['add'])}
-            }
-        
-        if data.get('tls') == 'tls':
-            outbound["streamSettings"]["tlsSettings"] = {
-                "serverName": data.get('sni', data['add']),
-                "allowInsecure": False
-            }
-            if data.get('fp'):
-                outbound["streamSettings"]["tlsSettings"]["fingerprint"] = data.get('fp')
-
         return outbound
 
     def convert_vless(self, data: Dict) -> Dict:
@@ -217,28 +200,8 @@ class ConfigToXray:
                     }
                 ]
             },
-            "streamSettings": {
-                "network": data.get('type', 'tcp'),
-                "security": data.get('security', 'none')
-            }
+            "streamSettings": transport_builder.build_xray_settings(data)
         }
-
-        if data.get('type') == 'ws':
-            outbound["streamSettings"]["wsSettings"] = {
-                "path": data.get('path', '/'),
-                "headers": {"Host": data.get('host', data['address'])}
-            }
-        
-        if data.get('security') == 'tls':
-            outbound["streamSettings"]["tlsSettings"] = {
-                "serverName": data.get('sni', data['address']),
-                "allowInsecure": False
-            }
-            if data.get('alpn'):
-                outbound["streamSettings"]["tlsSettings"]["alpn"] = data['alpn'].split(',')
-            if data.get('fp'):
-                outbound["streamSettings"]["tlsSettings"]["fingerprint"] = data.get('fp')
-
         return outbound
 
     def convert_trojan(self, data: Dict) -> Dict:
@@ -254,25 +217,8 @@ class ConfigToXray:
                     }
                 ]
             },
-            "streamSettings": {
-                "network": data.get('type', 'tcp'),
-                "security": "tls"
-            }
+            "streamSettings": transport_builder.build_xray_settings(data)
         }
-
-        if data.get('type') == 'ws':
-            outbound["streamSettings"]["wsSettings"] = {
-                "path": data.get('path', '/'),
-                "headers": {"Host": data.get('host', data['address'])}
-            }
-        
-        outbound["streamSettings"]["tlsSettings"] = {
-            "serverName": data.get('sni', data['address']),
-            "allowInsecure": False
-        }
-        if data.get('alpn'):
-            outbound["streamSettings"]["tlsSettings"]["alpn"] = data['alpn'].split(',')
-
         return outbound
 
     def convert_shadowsocks(self, data: Dict) -> Dict:
@@ -315,6 +261,7 @@ class ConfigToXray:
             
             line_lower = line.lower()
             outbound = None
+            data = None
 
             try:
                 if line_lower.startswith('vmess://'):
