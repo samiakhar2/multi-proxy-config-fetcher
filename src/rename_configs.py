@@ -2,7 +2,7 @@ import json
 import base64
 import sys
 import os
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Tuple
 from urllib.parse import urlparse, parse_qs, unquote
 import logging
 import re
@@ -35,29 +35,78 @@ COUNTRY_CODES = {
     'United States of America': 'US', 'Kingdom of the Netherlands': 'NL',
     'Turkiye': 'TR', 'Czechia': 'CZ', 'Viet Nam': 'VN', 'Panama': 'PA',
     'United Kingdom of Great Britain and Northern Ireland': 'GB',
-    'Taiwan (Province of China)': 'TW',
+    'Taiwan (Province of China)': 'TW', 'The Netherlands': 'NL',
+    'Holland': 'NL', 'UAE': 'AE', 'USA': 'US', 'UK': 'GB',
     'Unknown': 'XX'
+}
+
+FLAG_TO_CODE = {
+    '🇺🇸': 'US', '🇬🇧': 'GB', '🇩🇪': 'DE', '🇫🇷': 'FR', '🇨🇦': 'CA', '🇦🇺': 'AU',
+    '🇳🇱': 'NL', '🇸🇪': 'SE', '🇨🇭': 'CH', '🇸🇬': 'SG', '🇯🇵': 'JP', '🇰🇷': 'KR',
+    '🇭🇰': 'HK', '🇹🇼': 'TW', '🇮🇳': 'IN', '🇷🇺': 'RU', '🇧🇷': 'BR', '🇲🇽': 'MX',
+    '🇦🇷': 'AR', '🇪🇸': 'ES', '🇮🇹': 'IT', '🇵🇱': 'PL', '🇹🇷': 'TR', '🇺🇦': 'UA',
+    '🇫🇮': 'FI', '🇳🇴': 'NO', '🇩🇰': 'DK', '🇧🇪': 'BE', '🇦🇹': 'AT', '🇨🇿': 'CZ',
+    '🇮🇪': 'IE', '🇵🇹': 'PT', '🇬🇷': 'GR', '🇷🇴': 'RO', '🇧🇬': 'BG', '🇭🇺': 'HU',
+    '🇮🇱': 'IL', '🇦🇪': 'AE', '🇸🇦': 'SA', '🇿🇦': 'ZA', '🇪🇬': 'EG', '🇳🇬': 'NG',
+    '🇰🇪': 'KE', '🇨🇳': 'CN', '🇹🇭': 'TH', '🇻🇳': 'VN', '🇵🇭': 'PH', '🇮🇩': 'ID',
+    '🇲🇾': 'MY', '🇳🇿': 'NZ', '🇨🇱': 'CL', '🇨🇴': 'CO', '🇵🇪': 'PE', '🇻🇪': 'VE',
+    '🇮🇷': 'IR', '🇮🇶': 'IQ', '🇵🇰': 'PK', '🇧🇩': 'BD', '🇰🇿': 'KZ', '🇺🇿': 'UZ',
+    '🇦🇿': 'AZ', '🇱🇻': 'LV', '🇱🇹': 'LT', '🇪🇪': 'EE', '🇮🇸': 'IS', '🇱🇺': 'LU',
+    '🇲🇹': 'MT', '🇨🇾': 'CY', '🇭🇷': 'HR', '🇷🇸': 'RS', '🇸🇮': 'SI', '🇸🇰': 'SK',
+    '🇲🇩': 'MD', '🇵🇦': 'PA', '🏳️': 'XX'
 }
 
 class ConfigRenamer:
     def __init__(self, location_file: str):
-        self.location_cache: Dict[str, tuple] = {}
+        self.location_cache: Dict[str, Tuple] = {}
         self.load_location_cache(location_file)
+        self.normalized_country_codes = {str(k).lower().strip(): v for k, v in COUNTRY_CODES.items()}
 
     def load_location_cache(self, location_file: str):
         try:
             with open(location_file, 'r', encoding='utf-8') as f:
-                self.location_cache = json.load(f)
+                raw_cache = json.load(f)
+                for key, value in raw_cache.items():
+                    if isinstance(value, (list, tuple)) and len(value) >= 2:
+                        self.location_cache[key] = tuple(value[:2])
+                    else:
+                        logger.warning(f"Invalid cache entry for {key}: {value}")
             logger.info(f"Loaded {len(self.location_cache)} location entries from cache")
         except FileNotFoundError:
             logger.error(f"{location_file} not found!")
         except Exception as e:
             logger.error(f"Error loading location cache: {e}")
 
-    def get_location(self, address: str) -> tuple:
+    def get_country_code_from_flag(self, flag: str) -> str:
+        return FLAG_TO_CODE.get(flag, 'XX')
+
+    def get_country_code_from_name(self, country_name: str) -> str:
+        if not country_name:
+            return 'XX'
+        country_lower = str(country_name).lower().strip()
+        code = self.normalized_country_codes.get(country_lower)
+        if code:
+            return code
+        if len(country_name) == 2 and country_name.isupper():
+            return country_name
+        for pattern in ['the ', 'republic of ', 'kingdom of ']:
+            if country_lower.startswith(pattern):
+                clean_name = country_lower[len(pattern):]
+                code = self.normalized_country_codes.get(clean_name)
+                if code:
+                    return code
+        return 'XX'
+
+    def get_location(self, address: str) -> Tuple[str, str]:
+        if not address:
+            return "🏳️", "XX"
         if address in self.location_cache:
-            flag, country = tuple(self.location_cache[address])
-            country_code = COUNTRY_CODES.get(country, 'XX')
+            cache_entry = self.location_cache[address]
+            flag = str(cache_entry[0]) if cache_entry[0] else "🏳️"
+            country = str(cache_entry[1]) if cache_entry[1] else ""
+            country_code = self.get_country_code_from_flag(flag)
+            if country_code == 'XX' and country:
+                country_code = self.get_country_code_from_name(country)
             return flag, country_code
         return "🏳️", "XX"
 
@@ -72,7 +121,7 @@ class ConfigRenamer:
                 info_parts.append('WS')
             elif net_type == 'grpc':
                 info_parts.append('GRPC')
-            elif net_type == 'http' or net_type == 'h2':
+            elif net_type in ('http', 'h2'):
                 info_parts.append('HTTP2')
             elif net_type == 'quic':
                 info_parts.append('QUIC')
@@ -100,7 +149,7 @@ class ConfigRenamer:
                 info_parts.append('WS')
             elif transport_type == 'grpc':
                 info_parts.append('GRPC')
-            elif transport_type == 'http' or transport_type == 'h2':
+            elif transport_type in ('http', 'h2'):
                 info_parts.append('HTTP2')
             elif transport_type == 'quic':
                 info_parts.append('QUIC')
@@ -152,7 +201,7 @@ class ConfigRenamer:
                 info_parts.append('XHTTP')
             elif transport_type == 'httpupgrade':
                 info_parts.append('HTTPUPGRADE')
-            elif transport_type == 'http' or transport_type == 'h2':
+            elif transport_type in ('http', 'h2'):
                 info_parts.append('HTTP2')
                 
             info_parts.append('TLS')
@@ -210,7 +259,11 @@ class ConfigRenamer:
                 new_name = f"{flag} {index} - {country_code} - {protocol_str} - {data['port']}"
                 url = urlparse(config)
                 params = parse_qs(url.query)
-                query_string = '&'.join([f"{k}={v[0]}" for k, v in params.items()])
+                query_parts = []
+                for k, v in params.items():
+                    if isinstance(v, list) and v:
+                        query_parts.append(f"{k}={v[0]}")
+                query_string = '&'.join(query_parts)
                 new_config = f"vless://{data['uuid']}@{data['address']}:{data['port']}?{query_string}#{new_name}"
                 return new_config
             
@@ -224,7 +277,11 @@ class ConfigRenamer:
                 new_name = f"{flag} {index} - {country_code} - {protocol_str} - {data['port']}"
                 url = urlparse(config)
                 params = parse_qs(url.query)
-                query_string = '&'.join([f"{k}={v[0]}" for k, v in params.items()])
+                query_parts = []
+                for k, v in params.items():
+                    if isinstance(v, list) and v:
+                        query_parts.append(f"{k}={v[0]}")
+                query_string = '&'.join(query_parts)
                 new_config = f"trojan://{data['password']}@{data['address']}:{data['port']}?{query_string}#{new_name}"
                 return new_config
             
