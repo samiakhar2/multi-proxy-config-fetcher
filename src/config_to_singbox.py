@@ -6,6 +6,7 @@ from typing import Dict, Optional
 from urllib.parse import urlparse, parse_qs
 import logging
 import config_parser as parser
+import transport_builder
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -17,83 +18,74 @@ class ConfigToSingbox:
     def convert_to_singbox(self, config: str, index: int, protocol_type: str) -> Optional[Dict]:
         try:
             config_lower = config.lower()
+            data = None
+            outbound = {}
+            
             if config_lower.startswith('vmess://'):
                 data = parser.decode_vmess(config)
-                if not data or not all(k in data for k in ['add', 'port', 'id']):
-                    return None
-                
+                if not data: return None
                 tag = data.get('name') or f"{protocol_type} {index} - {data['add']}:{data['port']}"
-                
-                transport = {}
-                if data.get('net') == 'ws':
-                    transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['add'])}}
-                tls = {}
-                if data.get('tls') == 'tls':
-                    tls = {"enabled": True, "server_name": data.get('sni', data['add']), "insecure": False, "alpn": ["http/1.1"], "record_fragment": False, "utls": {"enabled": True, "fingerprint": "chrome"}}
-                else:
-                    tls = {"enabled": False}
-                return {"type": "vmess", "tag": tag, "server": data['add'], "server_port": int(data['port']), "uuid": data['id'], "security": data.get('scy', 'auto'), "alter_id": int(data.get('aid', 0)), "transport": transport, "tls": tls}
+                transport, tls = transport_builder.build_singbox_settings(data)
+                outbound = {
+                    "type": "vmess", "tag": tag, "server": data['add'], "server_port": int(data['port']),
+                    "uuid": data['id'], "security": data.get('scy', 'auto'), "alter_id": int(data.get('aid', 0)),
+                    "transport": transport, "tls": tls
+                }
             
             elif config_lower.startswith('vless://'):
                 data = parser.parse_vless(config)
                 if not data: return None
-
                 tag = data.get('name') or f"{protocol_type} {index} - {data['address']}:{data['port']}"
-
-                transport = {}
-                if data['type'] == 'ws':
-                    transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['address'])}}
-                tls_enabled = data['security'] == 'tls' or data['port'] in [443, 2053, 2083, 2087, 2096, 8443]
-                tls = {}
-                if tls_enabled:
-                    tls = {"enabled": True, "server_name": data['sni'], "insecure": False, "alpn": ["http/1.1"], "record_fragment": False, "utls": {"enabled": True, "fingerprint": "chrome"}}
-                else:
-                    tls = {"enabled": False}
-                return {"type": "vless", "tag": tag, "server": data['address'], "server_port": data['port'], "uuid": data['uuid'], "flow": data.get('flow', ''), "tls": tls, "transport": transport}
+                transport, tls = transport_builder.build_singbox_settings(data)
+                outbound = {
+                    "type": "vless", "tag": tag, "server": data['address'], "server_port": data['port'],
+                    "uuid": data['uuid'], "flow": data.get('flow', ''), "tls": tls, "transport": transport
+                }
             
             elif config_lower.startswith('trojan://'):
                 data = parser.parse_trojan(config)
                 if not data: return None
-                
                 tag = data.get('name') or f"{protocol_type} {index} - {data['address']}:{data['port']}"
-
-                transport = {}
-                if data['type'] == 'ws':
-                    transport = {"type": "ws", "path": data.get('path', '/'), "headers": {"Host": data.get('host', data['address'])}}
-            
-                tls = {"enabled": True, "server_name": data['sni'], "insecure": False, "alpn": ["http/1.1"], "record_fragment": False, "utls": {"enabled": True, "fingerprint": "chrome"}}
-                return {"type": "trojan", "tag": tag, "server": data['address'], "server_port": data['port'], "password": data['password'], "tls": tls, "transport": transport}
+                transport, tls = transport_builder.build_singbox_settings(data)
+                outbound = {
+                    "type": "trojan", "tag": tag, "server": data['address'], "server_port": data['port'],
+                    "password": data['password'], "tls": tls, "transport": transport
+                }
             
             elif config_lower.startswith(('hysteria2://', 'hy2://')):
                 data = parser.parse_hysteria2(config)
                 if not data: return None
-                
                 tag = data.get('name') or f"{protocol_type} {index} - {data['address']}:{data['port']}"
-                
-                return {"type": "hysteria2", "tag": tag, "server": data['address'], "server_port": data['port'], "password": data['password'], "tls": {"enabled": True, "insecure": True, "server_name": data['sni']}}
+                transport, tls = transport_builder.build_singbox_settings(data)
+                outbound = {
+                    "type": "hysteria2", "tag": tag, "server": data['address'], "server_port": data['port'],
+                    "password": data['password'], "tls": tls
+                }
          
             elif config_lower.startswith('ss://'):
                 data = parser.parse_shadowsocks(config)
                 if not data: return None
-                
                 tag = data.get('name') or f"{protocol_type} {index} - {data['address']}:{data['port']}"
-                
-                return {"type": "shadowsocks", "tag": tag, "server": data['address'], "server_port": data['port'], "method": data['method'], "password": data['password']}
+                outbound = {
+                    "type": "shadowsocks", "tag": tag, "server": data['address'], "server_port": data['port'],
+                    "method": data['method'], "password": data['password']
+                }
             
-            return None
+            return outbound if outbound else None
+            
         except Exception as e:
             logger.error(f"Failed during convert_to_singbox for config {config[:30]}...: {e}")
             return None
 
     def process_configs(self):
         try:
-            with open('configs/proxy_configs.txt', 'r', encoding='utf-8') as f:
+            with open('configs/proxy_configs_tested.txt', 'r', encoding='utf-8') as f:
                 configs = [line for line in f.read().strip().split('\n') if line.strip() and not line.strip().startswith('//')]
         except FileNotFoundError:
-            logger.error("proxy_configs.txt not found! Exiting.")
+            logger.error("proxy_configs_tested.txt not found! Exiting.")
             return
         except Exception as e:
-            logger.error(f"Error reading proxy_configs.txt: {e}")
+            logger.error(f"Error reading proxy_configs_tested.txt: {e}")
             return
 
         outbounds, valid_tags = [], []
@@ -188,10 +180,6 @@ class ConfigToSingbox:
 
 
 def main():
-    if len(sys.argv) > 1:
-        print("Usage: python config_to_singbox.py")
-        print("This script no longer requires a location file argument.")
-
     converter = ConfigToSingbox()
     converter.process_configs()
 
