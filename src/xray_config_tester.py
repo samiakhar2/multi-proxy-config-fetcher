@@ -10,9 +10,7 @@ import requests
 import signal
 import socket
 import sys
-import base64
-from urllib.parse import urlparse, parse_qs
-from contextlib import closing
+from contextlib import closing, contextmanager
 from config import ProxyConfig
 import config_parser as parser
 import transport_builder
@@ -21,11 +19,56 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-def find_free_port():
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
-        s.bind(('', 0))
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        return s.getsockname()[1]
+def find_free_port() -> int:
+    max_attempts = 10
+    for attempt in range(max_attempts):
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+            try:
+                s.bind(('127.0.0.1', 0))
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                port = s.getsockname()[1]
+                
+                with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as test_sock:
+                    test_sock.settimeout(0.1)
+                    try:
+                        test_sock.connect(('127.0.0.1', port))
+                        continue
+                    except (socket.error, socket.timeout):
+                        return port
+            except OSError as e:
+                if attempt == max_attempts - 1:
+                    logger.error(f"Failed to find free port after {max_attempts} attempts: {e}")
+                    raise
+                time.sleep(0.1)
+                continue
+    raise RuntimeError("Could not find a free port")
+
+
+@contextmanager
+def managed_process(command: List[str], config_file: str):
+    process = None
+    try:
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            preexec_fn=os.setsid
+        )
+        yield process
+    finally:
+        if process:
+            try:
+                if process.poll() is None:
+                    os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+                    try:
+                        process.wait(timeout=2)
+                    except subprocess.TimeoutExpired:
+                        os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+                        process.wait(timeout=1)
+            except (ProcessLookupError, OSError) as e:
+                logger.debug(f"Process cleanup error (ignorable): {e}")
+            except Exception as e:
+                logger.warning(f"Unexpected error during process cleanup: {e}")
 
 
 class XrayTester:
@@ -34,6 +77,21 @@ class XrayTester:
         self.timeout = timeout
         self.test_urls = test_urls if test_urls else ['https://www.youtube.com/generate_204']
         self.unsupported_protocols = ['tuic://', 'wireguard://']
+        self._verify_xray()
+    
+    def _verify_xray(self):
+        try:
+            result = subprocess.run(
+                [self.xray_path, 'version'],
+                capture_output=True,
+                timeout=5
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"xray verification failed: {result.stderr.decode()}")
+        except FileNotFoundError:
+            raise RuntimeError(f"xray not found at: {self.xray_path}")
+        except Exception as e:
+            raise RuntimeError(f"xray verification error: {e}")
         
     def is_supported_protocol(self, config_str: str) -> bool:
         config_lower = config_str.lower()
@@ -119,7 +177,7 @@ class XrayTester:
             return outbound
             
         except Exception as e:
-            logger.warning(f"Failed to parse config: {str(e)}")
+            logger.debug(f"Failed to parse config: {str(e)}")
             return None
     
     def create_xray_config(self, outbound: Dict, socks_port: int, http_port: int) -> Dict:
@@ -150,7 +208,6 @@ class XrayTester:
             logger.info(f"⊘ Skipping {protocol} (not supported by Xray core)")
             return True, 0, config_str
         
-        process = None
         config_file = None
         
         try:
@@ -164,81 +221,72 @@ class XrayTester:
             
             xray_config = self.create_xray_config(outbound, socks_port, http_port)
             
+            fd, config_file = tempfile.mkstemp(suffix='.json', text=True, prefix='xray_')
+            try:
+                with os.fdopen(fd, 'w') as f:
+                    json.dump(xray_config, f, indent=2)
+            except Exception as e:
+                os.close(fd)
+                raise
             
-            fd, config_file = tempfile.mkstemp(suffix='.json', text=True)
-            with os.fdopen(fd, 'w') as f:
-                json.dump(xray_config, f)
-            
-            process = subprocess.Popen(
+            with managed_process(
                 [self.xray_path, 'run', '-c', config_file],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                preexec_fn=os.setsid
-            )
-            
-            time.sleep(3)
-            
-            if process.poll() is not None:
-                stderr = process.stderr.read().decode('utf-8', errors='ignore') if process.stderr else ''
-                logger.warning(f"✗ Process crashed: {stderr[:100]}")
-                return False, None, config_str
-            
-            proxies = {
-                'http': f'http://127.0.0.1:{http_port}',
-                'https': f'http://127.0.0.1:{http_port}'
-            }
-            
-            for url in self.test_urls:
-                domain = url.split('/')[2]
-                start_time = time.time()
-                try:
-                    response = requests.get(
-                        url,
-                        proxies=proxies,
-                        timeout=self.timeout
-                    )
-                    delay = int((time.time() - start_time) * 1000)
-                    
-                    if response.status_code in [200, 204]:
-                        logger.info(f"✓ OK ({delay}ms via {domain})")
-                        return True, delay, config_str
-                    else:
-                        logger.warning(f"✗ HTTP {response.status_code} on {domain}")
-                        
-                except requests.exceptions.ProxyError as e:
-                    logger.warning(f"✗ Proxy error: {str(e)}")
+                config_file
+            ) as process:
+                time.sleep(3)
+                
+                if process.poll() is not None:
+                    stderr = process.stderr.read().decode('utf-8', errors='ignore') if process.stderr else ''
+                    logger.warning(f"✗ Process crashed: {stderr[:200]}")
                     return False, None, config_str
-                except requests.exceptions.Timeout:
-                    logger.warning(f"✗ Timeout on {domain}")
-                except requests.exceptions.ConnectionError as e:
-                    logger.warning(f"✗ Connection error on {domain}: {str(e)}")
-                except Exception as e:
-                    logger.warning(f"✗ {type(e).__name__} on {domain}: {str(e)}")
-            
-            logger.warning(f"✗ Failed all test URLs")
-            return False, None, config_str
+                
+                proxies = {
+                    'http': f'http://127.0.0.1:{http_port}',
+                    'https': f'http://127.0.0.1:{http_port}'
+                }
+                
+                session = requests.Session()
+                session.proxies.update(proxies)
+                
+                for url in self.test_urls:
+                    domain = url.split('/')[2] if '/' in url[8:] else 'unknown'
+                    start_time = time.time()
+                    try:
+                        response = session.get(
+                            url,
+                            timeout=self.timeout
+                        )
+                        delay = int((time.time() - start_time) * 1000)
+                        
+                        if response.status_code in [200, 204]:
+                            logger.info(f"✓ OK ({delay}ms via {domain})")
+                            return True, delay, config_str
+                        else:
+                            logger.warning(f"✗ HTTP {response.status_code} on {domain}")
+                            
+                    except requests.exceptions.ProxyError as e:
+                        logger.warning(f"✗ Proxy error: {str(e)[:100]}")
+                        return False, None, config_str
+                    except requests.exceptions.Timeout:
+                        logger.warning(f"✗ Timeout on {domain}")
+                    except requests.exceptions.ConnectionError as e:
+                        logger.warning(f"✗ Connection error on {domain}: {str(e)[:100]}")
+                    except Exception as e:
+                        logger.warning(f"✗ {type(e).__name__} on {domain}: {str(e)[:100]}")
+                
+                logger.warning(f"✗ Failed all test URLs")
+                return False, None, config_str
                 
         except Exception as e:
             logger.error(f"✗ Setup error: {str(e)}")
             return False, None, config_str
             
         finally:
-            if process:
-                try:
-                    os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-                    try:
-                        process.wait(timeout=2)
-                    except subprocess.TimeoutExpired:
-                        os.killpg(os.getpgid(process.pid), signal.SIGKILL)
-                        process.wait()
-                except:
-                    pass
-            
             if config_file and os.path.exists(config_file):
                 try:
                     os.unlink(config_file)
-                except:
-                    pass
+                except Exception as e:
+                    logger.debug(f"Failed to remove temp file {config_file}: {e}")
             
             time.sleep(0.3)
 
@@ -246,7 +294,7 @@ class XrayTester:
 class ParallelXrayTester:
     def __init__(self, xray_path: str = 'xray', max_workers: int = 8, timeout: int = 10, test_urls: List[str] = None):
         self.tester = XrayTester(xray_path, timeout, test_urls)
-        self.max_workers = max_workers
+        self.max_workers = max(1, min(max_workers, os.cpu_count() or 4))
         
     def test_all(self, configs: List[str]) -> List[str]:
         logger.info(f"Testing {len(configs)} configs with {self.max_workers} workers...")
@@ -263,21 +311,21 @@ class ParallelXrayTester:
                 config = futures[future]
                 tested += 1
                 
-                
                 try:
-                    success, delay, config_str = future.result()
+                    success, delay, config_str = future.result(timeout=self.tester.timeout + 10)
                     if success:
                         working.append(config_str)
                         if delay == 0:
                             skipped += 1
                     
-                    if tested % 25 == 0:
+                    if tested % 25 == 0 or tested == len(configs):
                         logger.info(f"Progress: {tested}/{len(configs)} ({len(working)} working, {skipped} skipped)")
                 
                 except Exception as e:
                     logger.error(f"Test error: {str(e)}")
         
-        logger.info(f"Results: {len(working)}/{len(configs)} working ({len(working)*100//max(1,len(configs))}%) - {skipped} skipped (unsupported)")
+        success_rate = (len(working) * 100) // max(1, len(configs))
+        logger.info(f"Results: {len(working)}/{len(configs)} working ({success_rate}%) - {skipped} skipped (unsupported)")
         return working
 
 
@@ -311,9 +359,12 @@ def main():
     
     logger.info(f"Loading configs from {input_file}")
     
-    
-    with open(input_file, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+    try:
+        with open(input_file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        logger.error(f"Input file not found: {input_file}")
+        sys.exit(1)
     
     configs = []
     header_lines = []
