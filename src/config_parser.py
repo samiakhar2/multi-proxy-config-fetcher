@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 VALID_UUID_PATTERN = re.compile(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
 VALID_IPV4_PATTERN = re.compile(r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
-VALID_IPV6_PATTERN = re.compile(r'^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::(?:[0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}$|^[0-9a-fA-F]{1,4}::(?:[0-9a-fA-F]{1,4}:){0,5}[0-9a-fA-F]{1,4}$')
+VALID_IPV6_PATTERN = re.compile(r'^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::(?:[0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}$|^[0-9a-fA-F]{1,4}::(?:[0-9a-fA-F]{1,4}:){0,5}[0-9a-fA-F]{1,4}$|^\[?(?:[0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}\]?$')
 VALID_DOMAIN_PATTERN = re.compile(r'^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?$')
 
 VALID_SS_METHODS = {
@@ -46,18 +46,44 @@ def safe_b64decode(s: str) -> Optional[str]:
         padding = '=' * (-len(s) % 4)
         decoded = base64.b64decode(s + padding, validate=True)
         return decoded.decode('utf-8', errors='strict')
-    except (binascii.Error, UnicodeDecodeError, ValueError) as e:
+    except (binascii.Error, UnicodeDecodeError, ValueError):
+        pass
+    
+    try:
+        s_original = s.replace('-', '+').replace('_', '/')
+        decoded = base64.b64decode(s_original)
+        return decoded.decode('utf-8', errors='ignore')
+    except Exception as e:
         logger.debug(f"Base64 decode failed for '{s[:20]}...': {e}")
         return None
 
 def validate_uuid(uuid: str) -> bool:
     if not uuid or not isinstance(uuid, str):
         return False
-    return bool(VALID_UUID_PATTERN.match(uuid))
+    
+    uuid = uuid.strip()
+    
+    if len(uuid) < 32:
+        return False
+    
+    if VALID_UUID_PATTERN.match(uuid):
+        return True
+    
+    if VALID_UUID_PATTERN.match(uuid.lower()):
+        return True
+    
+    uuid_no_dash = uuid.replace('-', '')
+    if len(uuid_no_dash) == 32 and all(c in '0123456789abcdefABCDEF' for c in uuid_no_dash):
+        return True
+    
+    return False
 
 def validate_host(host: str) -> bool:
     if not host or not isinstance(host, str) or len(host) > 253:
         return False
+    
+    host = host.strip('[]')
+    
     if VALID_IPV4_PATTERN.match(host):
         return True
     if VALID_IPV6_PATTERN.match(host):
@@ -305,6 +331,8 @@ def parse_shadowsocks(config: str) -> Optional[Dict]:
     except ValueError as e:
         logger.debug(f"Shadowsocks server split error: {e}")
         return None
+    
+    host = host.strip('[]')
     
     if not validate_host(host):
         logger.debug(f"Invalid Shadowsocks host: {host}")
