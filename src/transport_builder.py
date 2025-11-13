@@ -9,7 +9,7 @@ def build_singbox_settings(data: Dict) -> Tuple[Dict, Dict]:
     
     net_type = data.get('net', data.get('type', 'tcp')).lower()
     security = data.get('security', data.get('tls', 'none')).lower()
-    address = data.get('address', '')
+    address = data.get('address', data.get('add', ''))
     port = data.get('port', 443)
     
     try:
@@ -22,17 +22,36 @@ def build_singbox_settings(data: Dict) -> Tuple[Dict, Dict]:
         elif net_type == 'grpc':
             transport = {
                 "type": "grpc",
-                "service_name": data.get('path', ''),
-                "headers": {"Host": data.get('host', address)}
+                "service_name": data.get('path', data.get('serviceName', ''))
             }
         elif net_type in ('http', 'h2'):
             transport = {
                 "type": "http",
-                "host": data.get('host', address),
+                "host": [data.get('host', address)],
                 "path": data.get('path', '/')
             }
         elif net_type == 'quic':
             transport = {"type": "quic"}
+        elif net_type == 'kcp':
+            transport = {"type": "kcp"}
+        elif net_type == 'httpupgrade':
+            transport = {
+                "type": "httpupgrade",
+                "path": data.get('path', '/'),
+                "host": data.get('host', address)
+            }
+        elif net_type == 'splithttp':
+            transport = {
+                "type": "splithttp",
+                "path": data.get('path', '/'),
+                "host": data.get('host', address)
+            }
+        elif net_type == 'xhttp':
+            transport = {
+                "type": "xhttp",
+                "path": data.get('path', '/'),
+                "host": data.get('host', address)
+            }
         
         tls_enabled = security in ('tls', 'xtls', 'reality') or port in [443, 2053, 2083, 2087, 2096, 8443]
         
@@ -68,7 +87,7 @@ def build_xray_settings(data: Dict) -> Dict:
     
     net_type = data.get('net', data.get('type', 'tcp')).lower()
     security = data.get('security', data.get('tls', 'none')).lower()
-    address = data.get('address', '')
+    address = data.get('address', data.get('add', ''))
     
     try:
         stream_settings["network"] = net_type
@@ -80,7 +99,7 @@ def build_xray_settings(data: Dict) -> Dict:
             }
         elif net_type == 'grpc':
             stream_settings["grpcSettings"] = {
-                "serviceName": data.get('path', '')
+                "serviceName": data.get('path', data.get('serviceName', ''))
             }
         elif net_type in ('http', 'h2'):
             stream_settings["httpSettings"] = {
