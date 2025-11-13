@@ -240,7 +240,8 @@ class ConfigRenamer:
             if config_lower.startswith('vmess://'):
                 data = parser.decode_vmess(config)
                 if not data or not all(k in data for k in ['add', 'port', 'id']):
-                    return None
+                    logger.warning(f"Could not parse VMess config at index {index}")
+                    return config
                 flag, country_code = self.get_location(data['add'])
                 protocol_info = self.build_protocol_info(protocol_type, data)
                 protocol_str = '/'.join(protocol_info)
@@ -252,7 +253,8 @@ class ConfigRenamer:
             elif config_lower.startswith('vless://'):
                 data = parser.parse_vless(config)
                 if not data:
-                    return None
+                    logger.warning(f"Could not parse VLESS config at index {index}")
+                    return config
                 flag, country_code = self.get_location(data['address'])
                 protocol_info = self.build_protocol_info(protocol_type, data)
                 protocol_str = '/'.join(protocol_info)
@@ -270,7 +272,8 @@ class ConfigRenamer:
             elif config_lower.startswith('trojan://'):
                 data = parser.parse_trojan(config)
                 if not data:
-                    return None
+                    logger.warning(f"Could not parse Trojan config at index {index}")
+                    return config
                 flag, country_code = self.get_location(data['address'])
                 protocol_info = self.build_protocol_info(protocol_type, data)
                 protocol_str = '/'.join(protocol_info)
@@ -288,7 +291,8 @@ class ConfigRenamer:
             elif config_lower.startswith(('hysteria2://', 'hy2://')):
                 data = parser.parse_hysteria2(config)
                 if not data:
-                    return None
+                    logger.warning(f"Could not parse Hysteria2 config at index {index}")
+                    return config
                 flag, country_code = self.get_location(data['address'])
                 protocol_info = self.build_protocol_info(protocol_type, data)
                 protocol_str = '/'.join(protocol_info)
@@ -302,7 +306,8 @@ class ConfigRenamer:
             elif config_lower.startswith('ss://'):
                 data = parser.parse_shadowsocks(config)
                 if not data:
-                    return None
+                    logger.warning(f"Could not parse Shadowsocks config at index {index}")
+                    return config
                 flag, country_code = self.get_location(data['address'])
                 protocol_info = self.build_protocol_info(protocol_type, data)
                 protocol_str = '/'.join(protocol_info)
@@ -312,10 +317,10 @@ class ConfigRenamer:
                 new_config = f"ss://{encoded}@{data['address']}:{data['port']}#{new_name}"
                 return new_config
             
-            return None
+            return config
         except Exception as e:
-            logger.error(f"Failed to rename config: {e}")
-            return None
+            logger.error(f"Failed to rename config at index {index}: {e}")
+            return config
 
     def process_configs(self, input_file: str, output_file: str):
         try:
