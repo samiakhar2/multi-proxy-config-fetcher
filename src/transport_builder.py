@@ -3,6 +3,14 @@ from typing import Dict, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
+def map_transport_for_singbox(net_type: str) -> str:
+    transport_map = {
+        'httpupgrade': 'ws',
+        'splithttp': 'http',
+        'xhttp': 'http'
+    }
+    return transport_map.get(net_type, net_type)
+
 def build_singbox_settings(data: Dict) -> Tuple[Dict, Dict]:
     transport = {}
     tls = {"enabled": False}
@@ -13,6 +21,8 @@ def build_singbox_settings(data: Dict) -> Tuple[Dict, Dict]:
     port = data.get('port', 443)
     
     try:
+        net_type = map_transport_for_singbox(net_type)
+        
         if net_type == 'ws':
             transport = {
                 "type": "ws",
@@ -34,24 +44,6 @@ def build_singbox_settings(data: Dict) -> Tuple[Dict, Dict]:
             transport = {"type": "quic"}
         elif net_type == 'kcp':
             transport = {"type": "kcp"}
-        elif net_type == 'httpupgrade':
-            transport = {
-                "type": "httpupgrade",
-                "path": data.get('path', '/'),
-                "host": data.get('host', address)
-            }
-        elif net_type == 'splithttp':
-            transport = {
-                "type": "splithttp",
-                "path": data.get('path', '/'),
-                "host": data.get('host', address)
-            }
-        elif net_type == 'xhttp':
-            transport = {
-                "type": "xhttp",
-                "path": data.get('path', '/'),
-                "host": data.get('host', address)
-            }
         
         tls_enabled = security in ('tls', 'xtls', 'reality') or port in [443, 2053, 2083, 2087, 2096, 8443]
         
@@ -110,6 +102,21 @@ def build_xray_settings(data: Dict) -> Dict:
             stream_settings["quicSettings"] = {"security": "none", "header": {"type": "none"}}
         elif net_type == 'kcp':
             stream_settings["kcpSettings"] = {"header": {"type": "none"}}
+        elif net_type == 'httpupgrade':
+            stream_settings["httpupgradeSettings"] = {
+                "path": data.get('path', '/'),
+                "host": data.get('host', address)
+            }
+        elif net_type == 'splithttp':
+            stream_settings["splithttpSettings"] = {
+                "path": data.get('path', '/'),
+                "host": data.get('host', address)
+            }
+        elif net_type == 'xhttp':
+            stream_settings["xhttpSettings"] = {
+                "path": data.get('path', '/'),
+                "host": data.get('host', address)
+            }
         
         if security == 'reality':
             stream_settings["security"] = "reality"
