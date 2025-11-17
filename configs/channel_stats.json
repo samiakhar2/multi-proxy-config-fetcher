@@ -1,24 +1,24 @@
 {
-  "timestamp": "2025-11-16T12:47:23.985053+00:00",
+  "timestamp": "2025-11-17T02:00:40.265325+00:00",
   "channels": [
     {
       "url": "https://t.me/s/MARAMBASHI",
       "enabled": true,
       "metrics": {
-        "total_configs": 72,
-        "valid_configs": 43,
-        "unique_configs": 43,
-        "avg_response_time": 0.77,
+        "total_configs": 52,
+        "valid_configs": 31,
+        "unique_configs": 31,
+        "avg_response_time": 0.91,
         "success_count": 1,
         "fail_count": 0,
-        "overall_score": 88.78,
-        "last_success": "2025-11-16T12:44:28.700325+00:00",
+        "overall_score": 88.54,
+        "last_success": "2025-11-17T01:57:45.390267+00:00",
         "protocol_counts": {
           "wireguard://": 0,
           "hysteria2://": 0,
-          "vless://": 30,
+          "vless://": 19,
           "vmess://": 1,
-          "ss://": 12,
+          "ss://": 11,
           "trojan://": 0,
           "tuic://": 0
         }
@@ -51,7 +51,7 @@
       "url": "https://t.me/s/Ln2Ray",
       "enabled": false,
       "metrics": {
-        "total_configs": 0,
+        "total_configs": 1,
         "valid_configs": 0,
         "unique_configs": 0,
         "avg_response_time": 0,
@@ -74,7 +74,7 @@
       "url": "https://t.me/s/ShadowProxy66",
       "enabled": false,
       "metrics": {
-        "total_configs": 0,
+        "total_configs": 6,
         "valid_configs": 0,
         "unique_configs": 0,
         "avg_response_time": 0,
