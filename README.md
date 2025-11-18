@@ -1,3 +1,4 @@
+<document>
 [![Stars](https://img.shields.io/github/stars/4n0nymou3/multi-proxy-config-fetcher?style=flat-square)](https://github.com/4n0nymou3/multi-proxy-config-fetcher/stargazers)
 [![Forks](https://img.shields.io/github/forks/4n0nymou3/multi-proxy-config-fetcher?style=flat-square)](https://github.com/4n0nymou3/multi-proxy-config-fetcher/network/members)
 [![Issues](https://img.shields.io/github/issues/4n0nymou3/multi-proxy-config-fetcher?style=flat-square)](https://github.com/4n0nymou3/multi-proxy-config-fetcher/issues)
@@ -8,42 +9,27 @@
 
 [**🇺🇸English**](README.md) | [**![Lang_farsi](https://user-images.githubusercontent.com/125398461/234186932-52f1fa82-52c6-417f-8b37-08fe9250a55f.png)فارسی**](README_FA.md) | [**🇨🇳中文**](README_CN.md) | [**🇷🇺Русский**](README_RU.md)
 
-This project automatically fetches and updates various proxy configurations from public Telegram channels, SSCONF links and other URLs containing configuration data. It supports multiple proxy protocols including WireGuard, Hysteria2, VLESS, VMess, Shadowsocks, TUIC, and Trojan.
+An advanced, automated proxy configuration management system that fetches, validates, tests, enriches, and filters proxy configurations from multiple sources. This project provides enterprise-grade proxy management with real-time health monitoring, geographical tagging, and multi-stage security filtering.
 
-## Quick Access to Configs
+## 🌐 Access Configurations
 
-You can directly access the latest v2ray/Xray configurations through this URL:
-```
-https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs.txt
-```
-### Xray Configurations (Tested and Healthy)
-Access configurations that have successfully passed real-time health checks using the Xray core via this URL:
-```
-https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs_tested.txt
-```
-### Xray Load-balanced Configurations (Tested)
-Access configurations that have been tested with Xray core and optimized for load balancing, with automatic selection of the best performing config based on ping, via this URL:
-```
-https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/xray_loadbalanced_config.json
-```
+All proxy configurations and endpoints are available through our unified web interface:
 
-This project features advanced capabilities for proxy configuration management. The retrieved configurations are automatically converted to Sing-box format and stored in a separate JSON file. For each server, its geographical location is identified using the get location method, and the corresponding flag emoji and country name are automatically added to its tag. These features make proxy management and usage significantly more user-friendly and efficient.
+### **[👉 Anonymous Proxy Hub - Access All Endpoints](https://4n0nymou3.github.io/Anonymous-Proxy-Hub/)**
 
-This project now includes the latest Sing-box core for **real-time configuration health testing and verification**.
+The web interface provides:
+- **7 Different Endpoints** for various use cases
+- **Raw Configurations** - Unfiltered original configs
+- **Xray Tested** - Configs verified with Xray core (Pass 1)
+- **Xray Load Balanced** - Smart load-balanced JSON configs
+- **Xray Secure** - High-security filtered configs
+- **Sing-box All** - All configs in Sing-box format
+- **Sing-box Tested** - Sing-box verified configs (Pass 2)
+- **Sing-box Secure** - Maximum security Sing-box configs
 
-### Sing-box Configurations (All)
-Access all configurations converted to Sing-box format via this URL:
-```
-https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs_all.json
-```
-### Sing-box Configurations (Tested and Healthy)
-Access configurations that have successfully passed real-time health checks using the Sing-box core via this URL:
-```
-https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/singbox_configs_tested.json
-```
-## Channel and URL Performance
+## 📊 Source Performance Monitoring
 
-Below is the real-time performance statistics of the configured sources (Telegram channels and other URLs). This chart is automatically updated every hour.
+Real-time performance statistics of all configured sources (Telegram channels and URLs). This chart is automatically updated every 12 hours.
 
 ### Quick Overview
 <div align="center">
@@ -52,63 +38,89 @@ Below is the real-time performance statistics of the configured sources (Telegra
   </a>
 </div>
 
-### Detailed Report
+### Detailed Analytics
 📊 [View Full Interactive Dashboard](https://htmlpreview.github.io/?https://github.com/4n0nymou3/multi-proxy-config-fetcher/blob/main/assets/performance_report.html)
 
 > **Important for Forked Repositories**:  
-If you fork this repository, make sure to replace `USERNAME` in the above link with your GitHub username. This ensures that the link directs to your own interactive dashboard instead of the original project's dashboard. To do this:
-1. Edit the `README.md` file in your forked repository.
-2. Locate the following line:
-   ```markdown
-   📊 [View Full Interactive Dashboard](https://htmlpreview.github.io/?https://github.com/USERNAME/multi-proxy-config-fetcher/blob/main/assets/performance_report.html)
-   ```
-3. Replace `USERNAME` with your GitHub username.
-4. Commit the changes.
+> If you fork this repository, replace `4n0nymou3` in the dashboard link above with your GitHub username to access your own analytics dashboard.
 
 Each source is scored based on four key metrics:
-- **Reliability Score (35%)**: Success rate in fetching and updating configurations.
-- **Config Quality (25%)**: Ratio of valid configs to total fetched configurations.
-- **Config Uniqueness (25%)**: Percentage of unique configs contributed.
-- **Response Time (15%)**: Server response time and availability.
+- **Reliability Score (35%)**: Success rate in fetching and updating configurations
+- **Config Quality (25%)**: Ratio of valid configs to total fetched
+- **Config Uniqueness (25%)**: Percentage of unique configs contributed
+- **Response Time (15%)**: Server response time and availability
 
-The overall score is calculated in real-time and updated hourly. Sources scoring below 30% are automatically disabled.
+Sources scoring below 30% are automatically disabled to maintain system quality.
 
-> **Note**: The sources listed are examples. You can easily modify the source list in `src/config.py` to use your preferred Telegram channels, SSCONF links or other URLs. The performance metrics shown above are based on real-time monitoring of each source's reliability in providing valid configurations.
+## ✨ Key Features
 
-## Features
+### Multi-Protocol Support
+- **WireGuard** - Modern, fast VPN protocol
+- **Hysteria2** - High-performance proxy protocol
+- **VLESS** - Lightweight VMess alternative
+- **VMess** - Popular V2Ray protocol
+- **Shadowsocks** - Secure SOCKS5 proxy
+- **Trojan** - TLS-based proxy protocol
+- **TUIC** - UDP-based proxy protocol
 
-- Supports multiple proxy protocols:
-  - WireGuard
-  - Hysteria2
-  - VLESS
-  - VMess
-  - Shadowsocks (SS)
-  - Trojan
-  - TUIC
-- Fetches configs from:
-  - Public Telegram channels
-  - SSCONF format links
-  - URLs hosting configuration files
-- Smart handling of base64-encoded configs (preserves original format)
-- Protocol-specific validation and verification
-- Automatically updates configs every hour
-- Validates config age (excludes configs older than 90 days)
-- Removes duplicates
-- Real-time source performance monitoring
-- Automatic source health management
-- Dynamic protocol distribution balancing
-- Configuration testing with Sing-box core
-- Geographical location identification for servers
-- Automatic flag emoji and country name tagging
+### Advanced Processing Pipeline
 
-## Setup
+1. **Intelligent Fetching**
+   - Supports Telegram channels, SSCONF links, and custom URLs
+   - Automatic base64 decoding and format detection
+   - Duplicate removal and validation
 
-1. Fork this repository.
-2. Edit `src/config.py` and add your Telegram channels, SSCONF links or other URLs to the `SOURCE_URLS` list.
-3. Enable GitHub Actions in your forked repository.
-4. The configs will be automatically updated every hour in `configs/proxy_configs.txt`.
+2. **Two-Stage Testing System**
+   - **Pass 1**: Health check using Xray core
+   - **Pass 2**: Health check using Sing-box core
+   - Parallel testing with configurable workers
+   - Custom timeout and test URL configuration
 
-## Manual Setup
+3. **Geographical Enrichment**
+   - Automatic server location detection
+   - Country flag emoji tagging
+   - Support for multiple geolocation APIs
+   - Intelligent fallback system
+
+4. **Smart Renaming**
+   - Descriptive tags with protocol details
+   - Transport type identification (WS, GRPC, HTTP2, etc.)
+   - Security feature detection (TLS, Reality, XTLS, Vision)
+   - Port and country information
+
+5. **Security Filtering**
+   - Removes insecure encryption methods
+   - Validates TLS/SSL configurations
+   - Filters deprecated protocols
+   - Generates separate secure endpoint files
+
+6. **Format Conversion**
+   - Automatic conversion to Sing-box JSON format
+   - Xray load-balanced configuration generation
+   - Maintains compatibility with both cores
+
+## 🚀 Quick Start
+
+### For Users (Recommended)
+
+1. Visit the **[Anonymous Proxy Hub](https://4n0nymou3.github.io/Anonymous-Proxy-Hub/)**
+2. Choose your preferred endpoint
+3. Copy the URL and use it in your proxy client
+
+### For Developers
+
+#### Fork and Customize
+
+1. Fork this repository
+2. Edit `src/user_settings.py` to configure:
+   - Source URLs (Telegram channels, SSCONF links, etc.)
+   - Enabled protocols
+   - Testing parameters
+   - Geolocation API preferences
+3. Enable GitHub Actions in your forked repository
+4. Configurations will auto-update every 12 hours
+
+#### Local Setup
 
 ```bash
 # Clone the repository
@@ -118,43 +130,221 @@ cd multi-proxy-config-fetcher
 # Install dependencies
 pip install -r requirements.txt
 
-# Run manually
+# Run the complete pipeline
 python src/fetch_configs.py
+python src/enrich_configs.py configs/proxy_configs.txt configs/location_cache.json
+python src/rename_configs.py configs/location_cache.json configs/proxy_configs.txt configs/proxy_configs.txt
+python src/xray_config_tester.py configs/proxy_configs.txt configs/proxy_configs_tested.txt
+python src/config_to_singbox.py
+python src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json
+python src/security_filter.py
+python src/xray_balancer.py
 ```
 
-## Configuration
+## ⚙️ Configuration Options
 
-Edit `src/config.py` to modify:
-- Source list (Telegram channels, SSCONF links or URLs)
-- Minimum/maximum configs per protocol
-- Protocol ratios and balancing
-- Maximum config age
-- Output file location
-- Supported protocols
-- Request headers and timeouts
+### `src/user_settings.py`
 
-## Note for Forked Repositories
+```python
+# Source URLs
+SOURCE_URLS = [
+    "https://t.me/s/your_channel",
+    "https://raw.githubusercontent.com/user/repo/main/configs.txt",
+    # Add your sources here
+]
 
-If you fork this repository, you need to manually enable GitHub Actions:
-1. Go to `Settings > Actions` in your forked repository.
-2. Select **Allow all actions and reusable workflows**.
-3. Save the settings.
+# Power Mode
+USE_MAXIMUM_POWER = True  # Fetch maximum configs
+SPECIFIC_CONFIG_COUNT = 50  # Used if USE_MAXIMUM_POWER is False
 
-## Source Statistics
+# Protocol Filtering
+ENABLED_PROTOCOLS = {
+    "wireguard://": False,
+    "hysteria2://": True,
+    "vless://": True,
+    "vmess://": True,
+    "ss://": True,
+    "trojan://": True,
+    "tuic://": False,
+}
 
-The project tracks comprehensive performance metrics of each source in `configs/channel_stats.json`:
-- Overall performance score (0-100%)
-- Success rate in fetching configurations
-- Valid vs total configs ratio
+# Config Age Filtering
+MAX_CONFIG_AGE_DAYS = 1
+
+# Sing-box Testing
+ENABLE_SINGBOX_TESTER = True
+SINGBOX_TESTER_MAX_WORKERS = 8
+SINGBOX_TESTER_TIMEOUT_SECONDS = 10
+SINGBOX_TESTER_URLS = ['https://www.youtube.com/generate_204']
+
+# Xray Testing
+ENABLE_XRAY_TESTER = True
+XRAY_TESTER_MAX_WORKERS = 8
+XRAY_TESTER_TIMEOUT_SECONDS = 10
+XRAY_TESTER_URLS = ['https://www.youtube.com/generate_204']
+
+# Geolocation APIs (in priority order)
+LOCATION_APIS = [
+    'api.iplocation.net',
+    'freeipapi.com',
+    'ip-api.com',
+    'ipapi.co'
+]
+```
+
+## 📁 Output Files
+
+The system generates multiple output files for different use cases:
+
+- `configs/proxy_configs.txt` - Raw fetched configurations
+- `configs/proxy_configs_tested.txt` - Xray-tested configurations
+- `configs/singbox_configs_all.json` - All configs in Sing-box format
+- `configs/singbox_configs_tested.json` - Sing-box tested configs
+- `configs/singbox_configs_secure.json` - Security-filtered Sing-box configs
+- `configs/xray_loadbalanced_config.json` - Load-balanced Xray config
+- `configs/xray_secure_loadbalanced_config.json` - Secure load-balanced Xray config
+- `configs/location_cache.json` - Cached geolocation data
+- `configs/channel_stats.json` - Source performance metrics
+
+## 🔄 Automation
+
+The project uses GitHub Actions for automatic updates:
+
+- Runs twice daily (08:00 and 20:00 UTC)
+- Can be triggered manually via workflow_dispatch
+- Automatically commits and pushes updated configurations
+- Generates performance reports and charts
+
+### GitHub Actions Workflow
+
+The workflow performs these steps in order:
+1. Fetch configs from all sources
+2. Enrich with geolocation data
+3. Rename with descriptive tags
+4. Test with Xray core (Pass 1)
+5. Convert to Sing-box format
+6. Test with Sing-box core (Pass 2)
+7. Filter for security
+8. Generate load-balanced configs
+9. Update charts and reports
+10. Commit and push changes
+
+## 🛡️ Security Features
+
+### Automatic Security Filtering
+
+The system automatically removes:
+- **Insecure Shadowsocks ciphers** (non-AEAD methods)
+- **VMess with MD5 authentication** (deprecated alter_id)
+- **Unencrypted protocols** (VLESS/Trojan without TLS)
+- **Invalid TLS configurations** (insecure=true)
+- **VMess with security=none**
+
+### Secure Endpoints
+
+Dedicated secure endpoint files contain only configurations that meet modern security standards:
+- Valid TLS/SSL certificates
+- Modern encryption algorithms
+- No deprecated authentication methods
+- Proper certificate validation
+
+## 📈 Performance Optimization
+
+- **Parallel processing** for faster config testing
+- **Intelligent caching** for geolocation data
+- **Connection pooling** for HTTP requests
+- **Configurable timeouts** to balance speed and reliability
+- **Smart retry logic** with exponential backoff
+- **Resource cleanup** to prevent memory leaks
+
+## 🌍 Geolocation System
+
+### Multi-API Support
+
+The system supports multiple free geolocation APIs with automatic fallback:
+
+1. **api.iplocation.net** - Unlimited, fast, accurate
+2. **freeipapi.com** - 60 req/min, very fast
+3. **ip-api.com** - 45 req/min, reliable
+4. **ipapi.co** - 1000 req/day
+
+### Smart Detection
+
+- Automatic URL pattern detection
+- Efficient caching to minimize API calls
+- Graceful degradation if APIs fail
+- No API keys required
+
+## 📊 Statistics and Monitoring
+
+### Real-time Metrics
+
+The system tracks comprehensive metrics for each source:
+- Total configs fetched
+- Valid vs invalid ratio
 - Unique config contribution
-- Response time and reliability
-- Source health status
+- Average response time
+- Success/failure rates
+- Overall health score
 
-## Disclaimer
+### Visual Dashboards
 
-This project is provided for educational and informational purposes only. The developer is not responsible for any misuse of this project or its outcomes. Please ensure compliance with all relevant laws and regulations when using this software.
+- **SVG Chart** - Quick performance overview
+- **Interactive HTML Report** - Detailed analytics with:
+  - Active/inactive sources
+  - Protocol distribution
+  - Response time analysis
+  - Historical trends
 
-## About the Developer
+## 🤝 Contributing
 
-Developed by **4n0nymou3**.  
-For more information or to contact the developer, visit their [X (Twitter) profile](https://x.com/4n0nymou3).
+Contributions are welcome! Here's how you can help:
+
+1. **Report Issues** - Found a bug? Open an issue
+2. **Suggest Features** - Have an idea? Start a discussion
+3. **Submit PRs** - Improvements are always appreciated
+4. **Add Sources** - Know good proxy sources? Share them
+5. **Improve Docs** - Help make documentation better
+
+## ⚠️ Disclaimer
+
+This project is provided for **educational and informational purposes only**. The developers are not responsible for:
+- Any misuse of this software
+- Any damage or losses incurred
+- The quality or security of third-party proxy configurations
+- Violations of local laws or regulations
+
+**Users are responsible for:**
+- Ensuring compliance with local laws
+- Verifying the security of configurations
+- Understanding the risks of using proxy services
+- Respecting the terms of service of proxy providers
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👤 About the Developer
+
+Developed with ❤️ by **4n0nymou3**
+
+- 🐙 GitHub: [@4n0nymou3](https://github.com/4n0nymou3)
+- 🐦 Twitter/X: [@4n0nymou3](https://x.com/4n0nymou3)
+- 📦 Repository: [multi-proxy-config-fetcher](https://github.com/4n0nymou3/multi-proxy-config-fetcher)
+
+## 🙏 Acknowledgments
+
+- **Xray-core** - High-performance proxy platform
+- **Sing-box** - Universal proxy platform
+- **GitHub Actions** - Automation infrastructure
+
+---
+
+<div align="center">
+
+**[⬆ Back to Top](#-access-configurations)**
+
+Made with 💚 by Anonymous
+
+</div>
+</document>
