@@ -140,6 +140,7 @@ python src/config_to_singbox.py
 python src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json
 python src/security_filter.py
 python src/xray_balancer.py
+```
 
 ⚙️ Configuration Options
 src/user_settings.py
