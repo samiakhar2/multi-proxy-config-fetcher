@@ -3,17 +3,21 @@
 set -e
 
 CYAN='\033[0;36m'
+BRIGHT_CYAN='\033[1;36m'
 GREEN='\033[0;32m'
+BRIGHT_GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+MAGENTA='\033[1;35m'
+WHITE='\033[1;37m'
 NC='\033[0m'
 
 echo ""
-echo "════════════════════════════════════════════════════════════════"
-echo " 🧙‍♂️ Multi Wizard - Complete Setup"
-echo "═════════════════════════════════════════════"
-echo " 👽 Designed by: Anonymous"
-echo "═════════════════════════════════════════════"
+echo -e "${MAGENTA}═════════════════════════════════════════════${NC}"
+echo -e "${BRIGHT_CYAN} Multi Wizard - Complete Setup${NC}"
+echo -e "${MAGENTA}═════════════════════════════════════════════${NC}"
+echo -e "${WHITE} Designed by: ${BRIGHT_GREEN}👽 Anonymous${NC}"
+echo -e "${MAGENTA}═════════════════════════════════════════════${NC}"
 echo ""
 
 REPO_URL="https://github.com/4n0nymou3/multi-proxy-config-fetcher.git"
@@ -589,13 +593,13 @@ EOFMANAGE
 
 print_final_instructions() {
     echo ""
-    echo "════════════════════════════════════════════════════════════════"
-    echo "  🎉 Multi Wizard Installation Complete!"
-    echo "════════════════════════════════════════════════════════════════"
+    echo -e "${MAGENTA}════════════════════════════════════════════════════════════════${NC}"
+    echo -e "${BRIGHT_GREEN}  🎉 Multi Wizard Installation Complete!${NC}"
+    echo -e "${MAGENTA}════════════════════════════════════════════════════════════════${NC}"
     echo ""
-    echo "📁 Installation directory: $INSTALL_DIR"
+    echo -e "${BRIGHT_CYAN}📁 Installation directory:${NC} $INSTALL_DIR"
     echo ""
-    echo "🔧 Management commands:"
+    echo -e "${BRIGHT_CYAN}🔧 Management commands:${NC}"
     echo "   cd $INSTALL_DIR"
     echo "   bash manage.sh start    # Run pipeline now"
     echo "   bash manage.sh status   # Check system status"
@@ -603,20 +607,20 @@ print_final_instructions() {
     echo "   bash manage.sh clean    # Clean old logs"
     echo "   bash manage.sh update   # Update from GitHub"
     echo ""
-    echo "⏰ Automatic execution:"
+    echo -e "${BRIGHT_CYAN}⏰ Automatic execution:${NC}"
     if [ "$PLATFORM" = "macos" ]; then
         echo "   Configured via LaunchAgent (08:00 & 20:00)"
     else
         echo "   Configured via cron (every 12 hours)"
     fi
     echo ""
-    echo "📂 Output files will be in: $INSTALL_DIR/configs/"
-    echo "📝 Logs will be in: $INSTALL_DIR/logs/"
+    echo -e "${BRIGHT_CYAN}📂 Output files will be in:${NC} $INSTALL_DIR/configs/"
+    echo -e "${BRIGHT_CYAN}📝 Logs will be in:${NC} $INSTALL_DIR/logs/"
     echo ""
-    echo "💡 To run the pipeline now:"
-    echo "   cd $INSTALL_DIR && bash run.sh"
+    echo -e "${YELLOW}💡 To run the pipeline now:${NC}"
+    echo -e "${WHITE}   cd $INSTALL_DIR && bash run.sh${NC}"
     echo ""
-    echo "════════════════════════════════════════════════════════════════"
+    echo -e "${MAGENTA}════════════════════════════════════════════════════════════════${NC}"
 }
 
 main() {
