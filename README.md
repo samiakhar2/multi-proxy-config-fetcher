@@ -123,7 +123,8 @@ Sources scoring below 30% are automatically disabled to maintain system quality.
 
 #### Local Setup
 
-**[Anonymous Wizard](https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/README_WIZARD_FA.md)**
+**[Anonymous Wizard](README_WIZARD_FA.md
+)**
 
 ## ⚙️ Configuration Options
 
