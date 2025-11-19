@@ -123,24 +123,8 @@ Web 界面提供：
 
 #### 本地部署
 
-```bash
-# Clone the repository
-git clone https://github.com/4n0nymou3/multi-proxy-config-fetcher.git
-cd multi-proxy-config-fetcher
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the complete pipeline
-python src/fetch_configs.py
-python src/enrich_configs.py configs/proxy_configs.txt configs/location_cache.json
-python src/rename_configs.py configs/location_cache.json configs/proxy_configs.txt configs/proxy_configs.txt
-python src/xray_config_tester.py configs/proxy_configs.txt configs/proxy_configs_tested.txt
-python src/config_to_singbox.py
-python src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json
-python src/security_filter.py
-python src/xray_balancer.py
-```
+**[Anonymous Wizard](README_WIZARD_FA.md
+)**
 
 ## ⚙️ 配置选项
 
