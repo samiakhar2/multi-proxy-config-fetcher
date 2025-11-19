@@ -38,7 +38,7 @@ jobs:
           install_xray() {
             echo "Attempting to install Xray (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)..."
             
-            LATEST_URL=$(curl -s "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep "browser_download_url.*Xray-linux-64.zip" | cut -d : -f 2,3 | tr -d \" | tr -d ' ')
+            LATEST_URL=$(curl -s "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep -i "browser_download_url.*xray-linux-64.zip" | cut -d : -f 2,3 | tr -d \" | tr -d ' ')
             
             if [ -z "$LATEST_URL" ]; then
               echo "Failed to fetch Xray download URL from GitHub API"
@@ -92,7 +92,7 @@ jobs:
           echo "✗ Failed to install Xray after $MAX_RETRIES attempts"
           echo "Trying fallback method with hardcoded version..."
           
-          FALLBACK_VERSION="v24.12.18"
+          FALLBACK_VERSION="v25.1.1"
           FALLBACK_URL="https://github.com/XTLS/Xray-core/releases/download/${FALLBACK_VERSION}/Xray-linux-64.zip"
           
           echo "Using fallback URL: $FALLBACK_URL"
@@ -165,7 +165,7 @@ jobs:
           echo "✗ Failed to install Sing-box after $MAX_RETRIES attempts"
           echo "Trying fallback method with hardcoded version..."
           
-          FALLBACK_VERSION="1.11.0"
+          FALLBACK_VERSION="1.12.0"
           FALLBACK_URL="https://github.com/SagerNet/sing-box/releases/download/v${FALLBACK_VERSION}/sing-box_${FALLBACK_VERSION}_linux_amd64.deb"
           
           echo "Using fallback URL: $FALLBACK_URL"
