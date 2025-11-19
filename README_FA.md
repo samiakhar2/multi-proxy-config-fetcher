@@ -123,7 +123,8 @@
 
 #### راه‌اندازی محلی
 
-**[Anonymous Wizard](https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/README_WIZARD_FA.md)**
+**[Anonymous Wizard](README_WIZARD_FA.md
+)**
 
 ## ⚙️ گزینه‌های پیکربندی
 
