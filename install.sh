@@ -10,10 +10,10 @@ NC='\033[0m'
 
 echo ""
 echo "════════════════════════════════════════════════════════════════"
-echo "            🧙‍♂️  Multi Wizard - Complete Setup"
-echo "════════════════════════════════════════════════════════════════"
-echo "              Designed by: Anonymous"
-echo "════════════════════════════════════════════════════════════════"
+echo " 🧙‍♂️ Multi Wizard - Complete Setup"
+echo "═════════════════════════════════════════════"
+echo " 👽 Designed by: Anonymous"
+echo "═════════════════════════════════════════════"
 echo ""
 
 REPO_URL="https://github.com/4n0nymou3/multi-proxy-config-fetcher.git"
@@ -151,7 +151,17 @@ install_xray() {
                     arch_type="arm64-v8a"
                 fi
                 
-                wget -q "https://github.com/XTLS/Xray-core/releases/download/${xray_version}/Xray-${os_type}-${arch_type}.zip" -O /tmp/xray.zip
+                local download_url="https://github.com/XTLS/Xray-core/releases/download/${xray_version}/Xray-${os_type}-${arch_type}.zip"
+                
+                if check_command wget; then
+                    wget -q "$download_url" -O /tmp/xray.zip
+                elif check_command curl; then
+                    curl -sL "$download_url" -o /tmp/xray.zip
+                else
+                    print_error "Neither wget nor curl found!"
+                    return 1
+                fi
+                
                 unzip -q /tmp/xray.zip -d /tmp/xray
                 
                 if [ "$PLATFORM" = "macos" ]; then
@@ -171,14 +181,47 @@ install_xray() {
             case $arch in
                 aarch64) xray_arch="arm64-v8a" ;;
                 armv7l) xray_arch="arm32-v7a" ;;
+                x86_64) xray_arch="64" ;;
                 *) print_error "Unsupported architecture: $arch"; return 1 ;;
             esac
             
+            print_status "Detecting latest Xray version..."
             local xray_version=$(curl -s "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-            wget -q "https://github.com/XTLS/Xray-core/releases/download/${xray_version}/Xray-linux-${xray_arch}.zip" -O /tmp/xray.zip
-            unzip -q /tmp/xray.zip -d "$PREFIX/bin"
+            
+            if [ -z "$xray_version" ]; then
+                print_error "Failed to detect Xray version!"
+                return 1
+            fi
+            
+            local download_url="https://github.com/XTLS/Xray-core/releases/download/${xray_version}/Xray-linux-${xray_arch}.zip"
+            print_status "Downloading Xray from: $download_url"
+            
+            if ! curl -L "$download_url" -o "$PREFIX/tmp/xray.zip"; then
+                print_error "Failed to download Xray!"
+                return 1
+            fi
+            
+            if [ ! -f "$PREFIX/tmp/xray.zip" ]; then
+                print_error "Download failed: xray.zip not found!"
+                return 1
+            fi
+            
+            print_status "Extracting Xray..."
+            if ! unzip -q "$PREFIX/tmp/xray.zip" -d "$PREFIX/tmp/xray"; then
+                print_error "Failed to extract Xray!"
+                rm -f "$PREFIX/tmp/xray.zip"
+                return 1
+            fi
+            
+            if [ ! -f "$PREFIX/tmp/xray/xray" ]; then
+                print_error "Xray binary not found after extraction!"
+                rm -rf "$PREFIX/tmp/xray" "$PREFIX/tmp/xray.zip"
+                return 1
+            fi
+            
+            mv "$PREFIX/tmp/xray/xray" "$PREFIX/bin/xray"
             chmod +x "$PREFIX/bin/xray"
-            rm /tmp/xray.zip
+            rm -rf "$PREFIX/tmp/xray" "$PREFIX/tmp/xray.zip"
             ;;
         windows)
             print_warning "Please install Xray manually from: https://github.com/XTLS/Xray-core/releases"
@@ -247,7 +290,7 @@ install_dependencies_termux() {
     
     pkg update -y
     pkg upgrade -y
-    pkg install -y git python cronie wget unzip curl
+    pkg install -y git python cronie curl unzip
     
     print_success "Termux dependencies installed!"
 }
