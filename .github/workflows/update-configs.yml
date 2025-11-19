@@ -38,7 +38,7 @@ jobs:
           install_xray() {
             echo "Attempting to install Xray (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)..."
             
-            LATEST_URL=$(curl -s "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep -i "browser_download_url.*xray-linux-64.zip" | cut -d : -f 2,3 | tr -d \" | tr -d ' ')
+            LATEST_URL=$(curl -s "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep -i "browser_download_url.*xray-linux-64.zip" | grep -v "dgst" | cut -d : -f 2,3 | tr -d \" | tr -d ' ')
             
             if [ -z "$LATEST_URL" ]; then
               echo "Failed to fetch Xray download URL from GitHub API"
