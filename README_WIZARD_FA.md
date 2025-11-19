@@ -1164,13 +1164,9 @@ cp ~/multi-proxy-config-fetcher/configs/xray_secure_loadbalanced_config.json ~/s
 ### سهم‌گذاران:
 - **Xray-core Team** - موتور پروکسی قدرتمند
 - **Sing-box Team** - موتور پروکسی جامع
-- **تمام کاربران** - بازخورد و پشتیبانی
 
 ### حمایت از پروژه:
 - ⭐ **Star** کردن در GitHub
-- 🐛 گزارش باگ‌ها
-- 💡 پیشنهاد ویژگی‌های جدید
-- 🤝 مشارکت در توسعه
 
 ---
 
