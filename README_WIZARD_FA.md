@@ -1178,7 +1178,7 @@ cp ~/multi-proxy-config-fetcher/configs/xray_secure_loadbalanced_config.json ~/s
 curl -fsSL https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/main/install.sh | bash
 ```
 
-**ساخته شده با 💚 توسط تیم Anonymous**
+**ساخته شده با 💚 توسط Anonymous**
 
 [⬆ بازگشت به بالا](#-راهنمای-کامل-multi-wizard)
 
