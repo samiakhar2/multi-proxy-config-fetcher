@@ -323,10 +323,10 @@ bash manage.sh help
 | `proxy_configs.txt` | کانفیگ‌های خام دریافت شده | v2rayNG, v2rayN |
 | `proxy_configs_tested.txt` | کانفیگ‌های تست شده با Xray | v2rayNG, v2rayN ⭐ |
 | `singbox_configs_all.json` | همه کانفیگ‌ها در فرمت Sing-box | SFA, Hiddify, NekoBox |
-| `singbox_configs_tested.json` | کانفیگ‌های تست شده Sing-box | SFA, Hiddify, NekoBox ⭐ |
-| `singbox_configs_secure.json` | فقط کانفیگ‌های امن Sing-box | SFA, Hiddify, NekoBox 🛡️ |
-| `xray_loadbalanced_config.json` | لودبالانس Xray (همه) | v2rayNG, v2rayN |
-| `xray_secure_loadbalanced_config.json` | لودبالانس Xray (فقط امن) | v2rayNG, v2rayN 🛡️⭐ |
+| `singbox_configs_tested.json` | کانفیگ‌های تست شده با Sing-box | SFA, Hiddify, NekoBox ⭐ |
+| `singbox_configs_secure.json` | کانفیگ‌های تست شده و امن Sing-box | SFA, Hiddify, NekoBox 🛡️⭐ |
+| `xray_loadbalanced_config.json` | لودبالانس Xray (تست شده) | v2rayNG, v2rayN ⭐ |
+| `xray_secure_loadbalanced_config.json` | لودبالانس Xray (تست شده و امن) | v2rayNG, v2rayN 🛡️⭐ |
 
 ⭐ = توصیه می‌شود  
 🛡️ = امنیت بالا
