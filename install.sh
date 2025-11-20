@@ -14,7 +14,7 @@ NC='\033[0m'
 
 echo ""
 echo -e "${MAGENTA}═════════════════════════════════════════════${NC}"
-echo -e "${BRIGHT_CYAN} Multi Wizard - Complete Setup${NC}"
+echo -e "${BRIGHT_CYAN} Multi Wizard - Ultimate Setup${NC}"
 echo -e "${MAGENTA}═════════════════════════════════════════════${NC}"
 echo -e "${WHITE} Designed by: ${BRIGHT_GREEN}👽 Anonymous${NC}"
 echo -e "${MAGENTA}═════════════════════════════════════════════${NC}"
@@ -68,6 +68,7 @@ setup_repository() {
     if [ -d "$INSTALL_DIR" ]; then
         print_warning "Directory exists. Pulling latest changes..."
         cd "$INSTALL_DIR"
+        git config --global --add safe.directory "$INSTALL_DIR" 2>/dev/null || true
         git fetch --all
         git reset --hard origin/main
         git pull origin main
@@ -98,15 +99,15 @@ setup_python_environment() {
         if ! check_command python; then
             pkg install -y python
         fi
-        PYTHON_CMD="python"
-        PIP_CMD="pip"
+        PYTHON_SYS="python"
+        PIP_SYS="pip"
     else
         if check_command python3; then
-            PYTHON_CMD="python3"
-            PIP_CMD="pip3"
+            PYTHON_SYS="python3"
+            PIP_SYS="pip3"
         elif check_command python; then
-            PYTHON_CMD="python"
-            PIP_CMD="pip"
+            PYTHON_SYS="python"
+            PIP_SYS="pip"
         else
             print_error "Python not found!"
             exit 1
@@ -114,21 +115,26 @@ setup_python_environment() {
     fi
     
     print_status "Creating virtual environment..."
-    $PYTHON_CMD -m venv "$VENV_DIR" 2>/dev/null || {
-        print_warning "venv module not available, installing globally..."
+    $PYTHON_SYS -m venv "$VENV_DIR" 2>/dev/null || {
+        print_warning "venv module not available, installing globally (fallback)..."
         VENV_DIR=""
     }
     
-    if [ -n "$VENV_DIR" ] && [ -f "$VENV_DIR/bin/activate" ]; then
-        source "$VENV_DIR/bin/activate"
-        print_success "Virtual environment activated!"
+    # Determine the Python executable to use in scripts
+    if [ -n "$VENV_DIR" ] && [ -f "$VENV_DIR/bin/python" ]; then
+        PYTHON_EXEC="$VENV_DIR/bin/python"
+        PIP_EXEC="$VENV_DIR/bin/pip"
+        print_success "Virtual environment ready at $VENV_DIR"
+    else
+        PYTHON_EXEC="$PYTHON_SYS"
+        PIP_EXEC="$PIP_SYS"
     fi
     
     print_status "Upgrading pip..."
-    $PIP_CMD install --upgrade pip setuptools wheel
+    $PIP_EXEC install --upgrade pip setuptools wheel
     
     print_status "Installing Python dependencies..."
-    $PIP_CMD install -r "$INSTALL_DIR/requirements.txt"
+    $PIP_EXEC install -r "$INSTALL_DIR/requirements.txt"
     
     print_success "Python environment ready!"
 }
@@ -294,7 +300,8 @@ install_dependencies_termux() {
     
     pkg update -y
     pkg upgrade -y
-    pkg install -y git python cronie curl unzip
+    # Added termux-services and termux-api for better background handling
+    pkg install -y git python cronie curl unzip termux-api termux-services
     
     print_success "Termux dependencies installed!"
 }
@@ -338,9 +345,13 @@ install_dependencies_macos() {
 create_runner_script() {
     print_status "Creating runner script..."
     
-    local activate_cmd=""
-    if [ -n "$VENV_DIR" ] && [ -f "$VENV_DIR/bin/activate" ]; then
-        activate_cmd="source \"$VENV_DIR/bin/activate\""
+    # Logic to handle Wake Lock on Termux to prevent sleep during execution
+    local termux_lock_start=""
+    local termux_lock_end=""
+    
+    if [ "$PLATFORM" = "termux" ]; then
+        termux_lock_start="echo '🔋 Acquiring wake lock...'; termux-wake-lock"
+        termux_lock_end="echo '🔋 Releasing wake lock...'; termux-wake-unlock"
     fi
     
     cat > "$INSTALL_DIR/run.sh" << EOF
@@ -350,14 +361,13 @@ set -e
 
 cd "$INSTALL_DIR"
 
-$activate_cmd
-
+# Define Paths
 LOG_DIR="$INSTALL_DIR/logs"
 mkdir -p "\$LOG_DIR"
-
 TIMESTAMP=\$(date +%Y-%m-%d_%H-%M-%S)
 LOG_FILE="\$LOG_DIR/run_\$TIMESTAMP.log"
 
+# Redirect output to log file and stdout
 exec > >(tee -a "\$LOG_FILE")
 exec 2>&1
 
@@ -365,7 +375,8 @@ echo "════════════════════════�
 echo "  Multi Proxy Config Fetcher - Pipeline Execution"
 echo "  Started at: \$(date)"
 echo "════════════════════════════════════════════════════════════════"
-echo ""
+
+$termux_lock_start
 
 run_step() {
     local step_name="\$1"
@@ -384,51 +395,72 @@ run_step() {
     fi
 }
 
-run_step "Fetch Configs" "$PYTHON_CMD src/fetch_configs.py"
+# Use the absolute path to Python executable to ensure correct venv usage in Cron
+PYTHON_CMD="$PYTHON_EXEC"
 
-run_step "Enrich Configs" "$PYTHON_CMD src/enrich_configs.py configs/proxy_configs.txt configs/location_cache.json"
+run_step "Fetch Configs" "\$PYTHON_CMD src/fetch_configs.py"
 
-run_step "Rename Configs" "$PYTHON_CMD src/rename_configs.py configs/location_cache.json configs/proxy_configs.txt configs/proxy_configs.txt"
+run_step "Enrich Configs" "\$PYTHON_CMD src/enrich_configs.py configs/proxy_configs.txt configs/location_cache.json"
 
-run_step "Test with Xray" "$PYTHON_CMD src/xray_config_tester.py configs/proxy_configs.txt configs/proxy_configs_tested.txt"
+run_step "Rename Configs" "\$PYTHON_CMD src/rename_configs.py configs/location_cache.json configs/proxy_configs.txt configs/proxy_configs.txt"
 
-run_step "Convert to Sing-box" "$PYTHON_CMD src/config_to_singbox.py"
+run_step "Test with Xray" "\$PYTHON_CMD src/xray_config_tester.py configs/proxy_configs.txt configs/proxy_configs_tested.txt"
 
-run_step "Test with Sing-box" "$PYTHON_CMD src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json"
+run_step "Convert to Sing-box" "\$PYTHON_CMD src/config_to_singbox.py"
 
-run_step "Security Filter" "$PYTHON_CMD src/security_filter.py"
+run_step "Test with Sing-box" "\$PYTHON_CMD src/config_tester.py configs/singbox_configs_all.json configs/singbox_configs_tested.json"
 
-run_step "Generate Xray Balanced Config" "$PYTHON_CMD src/xray_balancer.py"
+run_step "Security Filter" "\$PYTHON_CMD src/security_filter.py"
 
-run_step "Generate Charts" "$PYTHON_CMD src/generate_charts.py"
+run_step "Generate Xray Balanced Config" "\$PYTHON_CMD src/xray_balancer.py"
+
+run_step "Generate Charts" "\$PYTHON_CMD src/generate_charts.py"
 
 echo "════════════════════════════════════════════════════════════════"
 echo "  🎉 Pipeline completed successfully!"
 echo "  Finished at: \$(date)"
 echo "════════════════════════════════════════════════════════════════"
-echo ""
-echo "📁 Output files location:"
-echo "   - configs/proxy_configs.txt"
-echo "   - configs/proxy_configs_tested.txt"
-echo "   - configs/singbox_configs_all.json"
-echo "   - configs/singbox_configs_tested.json"
-echo "   - configs/singbox_configs_secure.json"
-echo "   - configs/xray_loadbalanced_config.json"
-echo "   - configs/xray_secure_loadbalanced_config.json"
-echo ""
 
+$termux_lock_end
+
+# Cleanup old logs (older than 7 days)
 find "\$LOG_DIR" -name "run_*.log" -mtime +7 -delete 2>/dev/null || true
 
 EOF
 
     chmod +x "$INSTALL_DIR/run.sh"
-    print_success "Runner script created!"
+    print_success "Runner script created (optimized for $PLATFORM)!"
+}
+
+setup_termux_boot_persistence() {
+    print_status "Setting up Termux Boot persistence..."
+    
+    # Termux needs a special script to start crond on boot
+    local BOOT_DIR="$HOME/.termux/boot"
+    mkdir -p "$BOOT_DIR"
+    
+    cat > "$BOOT_DIR/start-wizard.sh" << EOF
+#!/data/data/com.termux/files/usr/bin/sh
+# Wait for boot to finish
+sleep 5
+# Acquire wake lock to prevent sleep killing the daemon
+termux-wake-lock
+# Start cron daemon if not running
+if ! pgrep -x "crond" > /dev/null; then
+    crond
+fi
+EOF
+
+    chmod +x "$BOOT_DIR/start-wizard.sh"
+    
+    print_success "Boot script created at $BOOT_DIR/start-wizard.sh"
+    print_warning "IMPORTANT: Please ensure you have installed the 'Termux:Boot' app from F-Droid and run it once!"
 }
 
 setup_cron_linux() {
     print_status "Setting up cron job for Linux..."
     
-    local cron_entry="0 */12 * * * cd $INSTALL_DIR && bash run.sh >> logs/cron.log 2>&1"
+    local cron_entry="0 */12 * * * /bin/bash $INSTALL_DIR/run.sh >> $INSTALL_DIR/logs/cron.log 2>&1"
     
     if ! check_command crontab; then
         print_error "crontab not found!"
@@ -503,14 +535,19 @@ setup_cron_termux() {
     
     mkdir -p "$PREFIX/var/spool/cron/crontabs"
     
-    local cron_entry="0 */12 * * * cd $INSTALL_DIR && bash run.sh >> logs/cron.log 2>&1"
+    # Use bash explicit path
+    local cron_entry="0 */12 * * * bash $INSTALL_DIR/run.sh >> $INSTALL_DIR/logs/cron.log 2>&1"
     
     (crontab -l 2>/dev/null | grep -v "multi-proxy-config-fetcher"; echo "$cron_entry") | crontab -
     
     if ! pgrep -x "crond" > /dev/null; then
         crond
         print_status "Started crond daemon"
+    else
+        print_status "crond daemon is already running"
     fi
+    
+    setup_termux_boot_persistence
     
     print_success "Cron job configured! (runs every 12 hours)"
 }
@@ -518,13 +555,13 @@ setup_cron_termux() {
 create_management_script() {
     print_status "Creating management script..."
     
-    cat > "$INSTALL_DIR/manage.sh" << 'EOFMANAGE'
+    cat > "$INSTALL_DIR/manage.sh" << EOFMANAGE
 #!/usr/bin/env bash
 
-INSTALL_DIR="$HOME/multi-proxy-config-fetcher"
-cd "$INSTALL_DIR"
+INSTALL_DIR="$INSTALL_DIR"
+cd "\$INSTALL_DIR"
 
-case "$1" in
+case "\$1" in
     start)
         echo "🚀 Starting pipeline..."
         bash run.sh
@@ -533,24 +570,36 @@ case "$1" in
         echo "📊 System Status:"
         echo ""
         if command -v xray >/dev/null 2>&1; then
-            echo "✓ Xray: $(xray version | head -1)"
+            echo "✓ Xray: \$(xray version | head -1)"
         else
             echo "✗ Xray: Not installed"
         fi
         
         if command -v sing-box >/dev/null 2>&1; then
-            echo "✓ Sing-box: $(sing-box version | head -1)"
+            echo "✓ Sing-box: \$(sing-box version | head -1)"
         else
             echo "✗ Sing-box: Not installed"
         fi
         
         echo ""
         echo "📁 Output files:"
-        ls -lh configs/*.txt configs/*.json 2>/dev/null | awk '{print "   ", $9, "-", $5}'
+        ls -lh configs/*.txt configs/*.json 2>/dev/null | awk '{print "   ", \$9, "-", \$5}'
         
         echo ""
         echo "📝 Recent logs:"
-        ls -lt logs/*.log 2>/dev/null | head -3 | awk '{print "   ", $9}'
+        ls -lt logs/*.log 2>/dev/null | head -3 | awk '{print "   ", \$9}'
+        
+        echo ""
+        echo "⏰ Cron Status:"
+        if [ "$PLATFORM" = "termux" ]; then
+            if pgrep -x "crond" > /dev/null; then
+                echo "✓ crond is running"
+            else
+                echo "✗ crond is NOT running (Try: crond)"
+            fi
+        else
+            echo "   Check system logs"
+        fi
         ;;
     logs)
         if [ -f "logs/cron.log" ]; then
@@ -566,6 +615,7 @@ case "$1" in
         ;;
     update)
         echo "🔄 Updating repository..."
+        git config --global --add safe.directory "\$INSTALL_DIR" 2>/dev/null || true
         git fetch --all
         git reset --hard origin/main
         git pull origin main
@@ -604,21 +654,16 @@ print_final_instructions() {
     echo "   bash manage.sh start    # Run pipeline now"
     echo "   bash manage.sh status   # Check system status"
     echo "   bash manage.sh logs     # View logs"
-    echo "   bash manage.sh clean    # Clean old logs"
-    echo "   bash manage.sh update   # Update from GitHub"
     echo ""
-    echo -e "${BRIGHT_CYAN}⏰ Automatic execution:${NC}"
-    if [ "$PLATFORM" = "macos" ]; then
-        echo "   Configured via LaunchAgent (08:00 & 20:00)"
-    else
-        echo "   Configured via cron (every 12 hours)"
+    
+    if [ "$PLATFORM" = "termux" ]; then
+        echo -e "${YELLOW}⚠️ IMPORTANT FOR TERMUX USERS:${NC}"
+        echo "   1. Install 'Termux:Boot' app from F-Droid"
+        echo "   2. Open 'Termux:Boot' once"
+        echo "   3. Disable Battery Optimization for Termux"
+        echo "   This ensures the automation continues after phone reboot."
     fi
-    echo ""
-    echo -e "${BRIGHT_CYAN}📂 Output files will be in:${NC} $INSTALL_DIR/configs/"
-    echo -e "${BRIGHT_CYAN}📝 Logs will be in:${NC} $INSTALL_DIR/logs/"
-    echo ""
-    echo -e "${YELLOW}💡 To run the pipeline now:${NC}"
-    echo -e "${WHITE}   cd $INSTALL_DIR && bash run.sh${NC}"
+    
     echo ""
     echo -e "${MAGENTA}════════════════════════════════════════════════════════════════${NC}"
 }
