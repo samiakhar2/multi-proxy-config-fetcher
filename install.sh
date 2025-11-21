@@ -120,7 +120,6 @@ setup_python_environment() {
         VENV_DIR=""
     }
     
-    # Determine the Python executable to use in scripts
     if [ -n "$VENV_DIR" ] && [ -f "$VENV_DIR/bin/python" ]; then
         PYTHON_EXEC="$VENV_DIR/bin/python"
         PIP_EXEC="$VENV_DIR/bin/pip"
@@ -300,7 +299,6 @@ install_dependencies_termux() {
     
     pkg update -y
     pkg upgrade -y
-    # Added termux-services and termux-api for better background handling
     pkg install -y git python cronie curl unzip termux-api termux-services
     
     print_success "Termux dependencies installed!"
@@ -345,13 +343,12 @@ install_dependencies_macos() {
 create_runner_script() {
     print_status "Creating runner script..."
     
-    # Logic to handle Wake Lock on Termux to prevent sleep during execution
     local termux_lock_start=""
     local termux_lock_end=""
     
     if [ "$PLATFORM" = "termux" ]; then
-        termux_lock_start="echo '🔋 Acquiring wake lock...'; termux-wake-lock"
-        termux_lock_end="echo '🔋 Releasing wake lock...'; termux-wake-unlock"
+        termux_lock_start="termux-wake-lock 2>/dev/null || true"
+        termux_lock_end="termux-wake-unlock 2>/dev/null || true"
     fi
     
     cat > "$INSTALL_DIR/run.sh" << EOF
@@ -361,13 +358,11 @@ set -e
 
 cd "$INSTALL_DIR"
 
-# Define Paths
 LOG_DIR="$INSTALL_DIR/logs"
 mkdir -p "\$LOG_DIR"
 TIMESTAMP=\$(date +%Y-%m-%d_%H-%M-%S)
 LOG_FILE="\$LOG_DIR/run_\$TIMESTAMP.log"
 
-# Redirect output to log file and stdout
 exec > >(tee -a "\$LOG_FILE")
 exec 2>&1
 
@@ -395,7 +390,6 @@ run_step() {
     fi
 }
 
-# Use the absolute path to Python executable to ensure correct venv usage in Cron
 PYTHON_CMD="$PYTHON_EXEC"
 
 run_step "Fetch Configs" "\$PYTHON_CMD src/fetch_configs.py"
@@ -423,38 +417,66 @@ echo "════════════════════════�
 
 $termux_lock_end
 
-# Cleanup old logs (older than 7 days)
 find "\$LOG_DIR" -name "run_*.log" -mtime +7 -delete 2>/dev/null || true
 
 EOF
 
     chmod +x "$INSTALL_DIR/run.sh"
-    print_success "Runner script created (optimized for $PLATFORM)!"
+    print_success "Runner script created!"
 }
 
-setup_termux_boot_persistence() {
-    print_status "Setting up Termux Boot persistence..."
+setup_termux_service() {
+    print_status "Setting up Termux persistent service..."
     
-    # Termux needs a special script to start crond on boot
-    local BOOT_DIR="$HOME/.termux/boot"
-    mkdir -p "$BOOT_DIR"
+    mkdir -p "$PREFIX/var/service"
     
-    cat > "$BOOT_DIR/start-wizard.sh" << EOF
+    cat > "$PREFIX/var/service/multiproxy/run" << 'EOFSERVICE'
 #!/data/data/com.termux/files/usr/bin/sh
-# Wait for boot to finish
-sleep 5
-# Acquire wake lock to prevent sleep killing the daemon
-termux-wake-lock
-# Start cron daemon if not running
-if ! pgrep -x "crond" > /dev/null; then
-    crond
-fi
-EOF
+exec 2>&1
 
-    chmod +x "$BOOT_DIR/start-wizard.sh"
+INSTALL_DIR="$HOME/multi-proxy-config-fetcher"
+INTERVAL=43200
+
+termux-wake-lock 2>/dev/null || true
+
+while true; do
+    if [ -d "$INSTALL_DIR" ]; then
+        cd "$INSTALL_DIR"
+        bash run.sh
+    fi
+    sleep $INTERVAL
+done
+EOFSERVICE
+
+    chmod +x "$PREFIX/var/service/multiproxy/run"
     
-    print_success "Boot script created at $BOOT_DIR/start-wizard.sh"
-    print_warning "IMPORTANT: Please ensure you have installed the 'Termux:Boot' app from F-Droid and run it once!"
+    mkdir -p "$PREFIX/var/service/multiproxy/log"
+    
+    cat > "$PREFIX/var/service/multiproxy/log/run" << 'EOFLOG'
+#!/data/data/com.termux/files/usr/bin/sh
+LOG_DIR="$HOME/multi-proxy-config-fetcher/logs"
+mkdir -p "$LOG_DIR"
+exec svlogd -tt "$LOG_DIR"
+EOFLOG
+
+    chmod +x "$PREFIX/var/service/multiproxy/log/run"
+    
+    mkdir -p ~/.termux/boot
+    
+    cat > ~/.termux/boot/start-multiproxy << 'EOFBOOT'
+#!/data/data/com.termux/files/usr/bin/sh
+sleep 10
+termux-wake-lock
+sv-enable multiproxy
+sv up multiproxy
+EOFBOOT
+
+    chmod +x ~/.termux/boot/start-multiproxy
+    
+    sv-enable multiproxy 2>/dev/null || true
+    sv up multiproxy 2>/dev/null || true
+    
+    print_success "Termux service configured and started!"
 }
 
 setup_cron_linux() {
@@ -530,38 +552,25 @@ EOF
     print_success "LaunchAgent configured! (runs at 08:00 and 20:00)"
 }
 
-setup_cron_termux() {
-    print_status "Setting up cron for Termux..."
-    
-    mkdir -p "$PREFIX/var/spool/cron/crontabs"
-    
-    # Use bash explicit path
-    local cron_entry="0 */12 * * * bash $INSTALL_DIR/run.sh >> $INSTALL_DIR/logs/cron.log 2>&1"
-    
-    (crontab -l 2>/dev/null | grep -v "multi-proxy-config-fetcher"; echo "$cron_entry") | crontab -
-    
-    if ! pgrep -x "crond" > /dev/null; then
-        crond
-        print_status "Started crond daemon"
-    else
-        print_status "crond daemon is already running"
-    fi
-    
-    setup_termux_boot_persistence
-    
-    print_success "Cron job configured! (runs every 12 hours)"
-}
-
 create_management_script() {
     print_status "Creating management script..."
     
-    cat > "$INSTALL_DIR/manage.sh" << EOFMANAGE
+    cat > "$INSTALL_DIR/manage.sh" << 'EOFMANAGE'
 #!/usr/bin/env bash
 
-INSTALL_DIR="$INSTALL_DIR"
-cd "\$INSTALL_DIR"
+INSTALL_DIR="$HOME/multi-proxy-config-fetcher"
+cd "$INSTALL_DIR"
 
-case "\$1" in
+PLATFORM=""
+if command -v termux-info >/dev/null 2>&1; then
+    PLATFORM="termux"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    PLATFORM="macos"
+else
+    PLATFORM="linux"
+fi
+
+case "$1" in
     start)
         echo "🚀 Starting pipeline..."
         bash run.sh
@@ -570,42 +579,39 @@ case "\$1" in
         echo "📊 System Status:"
         echo ""
         if command -v xray >/dev/null 2>&1; then
-            echo "✓ Xray: \$(xray version | head -1)"
+            echo "✓ Xray: $(xray version | head -1)"
         else
             echo "✗ Xray: Not installed"
         fi
         
         if command -v sing-box >/dev/null 2>&1; then
-            echo "✓ Sing-box: \$(sing-box version | head -1)"
+            echo "✓ Sing-box: $(sing-box version | head -1)"
         else
             echo "✗ Sing-box: Not installed"
         fi
         
         echo ""
+        
+        if [ "$PLATFORM" = "termux" ]; then
+            echo "🔄 Service Status:"
+            sv status multiproxy 2>/dev/null || echo "✗ Service not running"
+            echo ""
+        fi
+        
         echo "📁 Output files:"
-        ls -lh configs/*.txt configs/*.json 2>/dev/null | awk '{print "   ", \$9, "-", \$5}'
+        ls -lh configs/*.txt configs/*.json 2>/dev/null | awk '{print "   ", $9, "-", $5}'
         
         echo ""
         echo "📝 Recent logs:"
-        ls -lt logs/*.log 2>/dev/null | head -3 | awk '{print "   ", \$9}'
-        
-        echo ""
-        echo "⏰ Cron Status:"
-        if [ "$PLATFORM" = "termux" ]; then
-            if pgrep -x "crond" > /dev/null; then
-                echo "✓ crond is running"
-            else
-                echo "✗ crond is NOT running (Try: crond)"
-            fi
-        else
-            echo "   Check system logs"
-        fi
+        ls -lt logs/*.log 2>/dev/null | head -3 | awk '{print "   ", $9}'
         ;;
     logs)
-        if [ -f "logs/cron.log" ]; then
+        if [ "$PLATFORM" = "termux" ]; then
+            sv check multiproxy 2>/dev/null && tail -50 logs/current || tail -50 logs/run_*.log 2>/dev/null | tail -50
+        elif [ -f "logs/cron.log" ]; then
             tail -50 logs/cron.log
         else
-            echo "No cron logs found"
+            ls -t logs/run_*.log 2>/dev/null | head -1 | xargs tail -50
         fi
         ;;
     clean)
@@ -615,11 +621,20 @@ case "\$1" in
         ;;
     update)
         echo "🔄 Updating repository..."
-        git config --global --add safe.directory "\$INSTALL_DIR" 2>/dev/null || true
+        git config --global --add safe.directory "$INSTALL_DIR" 2>/dev/null || true
         git fetch --all
         git reset --hard origin/main
         git pull origin main
         echo "✓ Updated!"
+        ;;
+    restart-service)
+        if [ "$PLATFORM" = "termux" ]; then
+            echo "🔄 Restarting service..."
+            sv restart multiproxy
+            echo "✓ Service restarted!"
+        else
+            echo "⚠️  Service restart only available on Termux"
+        fi
         ;;
     help|*)
         echo "Multi Wizard - Management Script"
@@ -627,12 +642,15 @@ case "\$1" in
         echo "Usage: bash manage.sh [command]"
         echo ""
         echo "Commands:"
-        echo "  start   - Run the pipeline manually"
-        echo "  status  - Show system status and files"
-        echo "  logs    - Show recent cron logs"
-        echo "  clean   - Remove old log files"
-        echo "  update  - Update repository from GitHub"
-        echo "  help    - Show this help message"
+        echo "  start           - Run pipeline manually"
+        echo "  status          - Show system status"
+        echo "  logs            - Show recent logs"
+        echo "  clean           - Remove old logs"
+        echo "  update          - Update from GitHub"
+        if [ "$PLATFORM" = "termux" ]; then
+            echo "  restart-service - Restart Termux service"
+        fi
+        echo "  help            - Show this help"
         ;;
 esac
 EOFMANAGE
@@ -649,19 +667,28 @@ print_final_instructions() {
     echo ""
     echo -e "${BRIGHT_CYAN}📁 Installation directory:${NC} $INSTALL_DIR"
     echo ""
-    echo -e "${BRIGHT_CYAN}🔧 Management commands:${NC}"
+    echo -e "${BRIGHT_CYAN}🔧 Quick commands:${NC}"
     echo "   cd $INSTALL_DIR"
-    echo "   bash manage.sh start    # Run pipeline now"
-    echo "   bash manage.sh status   # Check system status"
+    echo "   bash manage.sh start    # Run now"
+    echo "   bash manage.sh status   # Check status"
     echo "   bash manage.sh logs     # View logs"
     echo ""
     
     if [ "$PLATFORM" = "termux" ]; then
-        echo -e "${YELLOW}⚠️ IMPORTANT FOR TERMUX USERS:${NC}"
-        echo "   1. Install 'Termux:Boot' app from F-Droid"
-        echo "   2. Open 'Termux:Boot' once"
-        echo "   3. Disable Battery Optimization for Termux"
-        echo "   This ensures the automation continues after phone reboot."
+        echo -e "${BRIGHT_CYAN}📱 Termux Service:${NC}"
+        echo "   sv status multiproxy    # Check service"
+        echo "   sv restart multiproxy   # Restart service"
+        echo ""
+        echo -e "${YELLOW}⚠️  CRITICAL STEPS:${NC}"
+        echo "   1. Install Termux:Boot from F-Droid"
+        echo "   2. Open Termux:Boot once"
+        echo "   3. Settings → Apps → Termux → Battery → Unrestricted"
+        echo ""
+        echo -e "${GREEN}✓ Service runs every 12 hours automatically${NC}"
+    elif [ "$PLATFORM" = "macos" ]; then
+        echo -e "${GREEN}✓ LaunchAgent runs at 08:00 and 20:00 daily${NC}"
+    else
+        echo -e "${GREEN}✓ Cron job runs every 12 hours${NC}"
     fi
     
     echo ""
@@ -681,7 +708,6 @@ main() {
     
     if [ "$PLATFORM" = "windows" ]; then
         print_error "Windows detected! Please use WSL2 or Git Bash."
-        print_status "Install WSL2: https://docs.microsoft.com/windows/wsl/install"
         exit 1
     fi
     
@@ -709,7 +735,7 @@ main() {
     
     case $PLATFORM in
         termux)
-            setup_cron_termux
+            setup_termux_service
             ;;
         linux)
             setup_cron_linux
