@@ -310,6 +310,11 @@ sudo systemctl enable cron
 
 #### روش 1: تنظیم سریع با یک دستور
 
+**تغییر به هر 1 ساعت کچ)پیشنهادی):**
+```bash
+sed -i 's/INTERVAL=43200/INTERVAL=3600/' $PREFIX/var/service/multiproxy/run && sv restart multiproxy
+```
+
 **تغییر به هر 1 ساعت:**
 ```bash
 echo "0 * * * * bash $HOME/multi-proxy-config-fetcher/run.sh >> $HOME/multi-proxy-config-fetcher/logs/cron.log 2>&1" | crontab -
