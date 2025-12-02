@@ -38,9 +38,9 @@ jobs:
           install_xray() {
             echo "Attempting to install Xray (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)..."
             
-            LATEST_URL=$(curl -s "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep -i "browser_download_url.*xray-linux-64.zip" | grep -v "dgst" | cut -d : -f 2,3 | tr -d \" | tr -d ' ')
+            LATEST_URL=$(curl -sL "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | jq -r '.assets[] | select(.name=="Xray-linux-64.zip") | .browser_download_url')
             
-            if [ -z "$LATEST_URL" ]; then
+            if [ -z "$LATEST_URL" ] || [ "$LATEST_URL" == "null" ]; then
               echo "Failed to fetch Xray download URL from GitHub API"
               return 1
             fi
@@ -118,9 +118,9 @@ jobs:
           install_singbox() {
             echo "Attempting to install Sing-box (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)..."
             
-            LATEST_URL=$(curl -s "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep "browser_download_url.*linux_amd64.deb" | cut -d : -f 2,3 | tr -d \" | tr -d ' ')
+            LATEST_URL=$(curl -sL "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | jq -r '.assets[] | select(.name | endswith("_linux_amd64.deb")) | .browser_download_url')
             
-            if [ -z "$LATEST_URL" ]; then
+            if [ -z "$LATEST_URL" ] || [ "$LATEST_URL" == "null" ]; then
               echo "Failed to fetch Sing-box download URL from GitHub API"
               return 1
             fi
