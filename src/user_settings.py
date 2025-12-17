@@ -35,7 +35,7 @@ MAX_CONFIG_AGE_DAYS = 2
 # Set to True to enable testing of configs using sing-box.
 # If True, sing-box will be used to test all fetched configs and create a 'tested' config file.
 # If False, the testing step will be skipped.
-ENABLE_SINGBOX_TESTER = True
+ENABLE_SINGBOX_TESTER = False
 
 # Number of parallel workers to use for testing sing-box configs.
 # A higher number means faster testing but uses more CPU/RAM.
@@ -57,7 +57,7 @@ SINGBOX_TESTER_URLS = [
 # Set to True to enable testing of configs using Xray core.
 # If True, Xray will be used to test all fetched configs before conversion and create a 'tested' config file.
 # If False, the testing step will be skipped.
-ENABLE_XRAY_TESTER = True
+ENABLE_XRAY_TESTER = False
 
 # Number of parallel workers to use for testing Xray configs.
 # A higher number means faster testing but uses more CPU/RAM.
