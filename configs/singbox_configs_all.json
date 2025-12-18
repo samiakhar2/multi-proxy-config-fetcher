@@ -103,7 +103,9 @@
             "outbounds": [
                 "👽 Best Ping 🚀",
                 "🇨🇿 1 - CZ - VLESS/GRPC - 45153",
-                "🇨🇿 2 - CZ - VLESS/GRPC - 23921",
+                "🇬🇧 2 - GB - VLESS/GRPC - 21251",
+                "🇨🇿 3 - CZ - VLESS/GRPC - 23921",
+                "🇩🇪 4 - DE - VLESS/GRPC - 53480",
                 "direct"
             ]
         },
@@ -116,7 +118,9 @@
             "tag": "👽 Best Ping 🚀",
             "outbounds": [
                 "🇨🇿 1 - CZ - VLESS/GRPC - 45153",
-                "🇨🇿 2 - CZ - VLESS/GRPC - 23921"
+                "🇬🇧 2 - GB - VLESS/GRPC - 21251",
+                "🇨🇿 3 - CZ - VLESS/GRPC - 23921",
+                "🇩🇪 4 - DE - VLESS/GRPC - 53480"
             ],
             "url": "https://www.gstatic.com/generate_204",
             "interrupt_exist_connections": false,
@@ -139,10 +143,40 @@
         },
         {
             "type": "vless",
-            "tag": "🇨🇿 2 - CZ - VLESS/GRPC - 23921",
+            "tag": "🇬🇧 2 - GB - VLESS/GRPC - 21251",
+            "server": "209.38.168.122",
+            "server_port": 21251,
+            "uuid": "26d47bd6-801a-42ca-8c50-b59b182a0a9a",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "grpc",
+                "service_name": ""
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇨🇿 3 - CZ - VLESS/GRPC - 23921",
             "server": "194.182.79.105",
             "server_port": 23921,
             "uuid": "9fcca42b-b28d-434f-8d6d-aa874269b3f2",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "grpc",
+                "service_name": ""
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇩🇪 4 - DE - VLESS/GRPC - 53480",
+            "server": "134.122.94.36",
+            "server_port": 53480,
+            "uuid": "f5c918d9-8534-45ed-8cb7-562c4a3f56c6",
             "flow": "",
             "tls": {
                 "enabled": false

@@ -87,6 +87,33 @@
       "settings": {
         "vnext": [
           {
+            "address": "209.38.168.122",
+            "port": 21251,
+            "users": [
+              {
+                "id": "26d47bd6-801a-42ca-8c50-b59b182a0a9a",
+                "flow": "",
+                "encryption": "none",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "grpc",
+        "security": "none",
+        "grpcSettings": {
+          "serviceName": ""
+        }
+      },
+      "tag": "proxy-2"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
             "address": "194.182.79.105",
             "port": 23921,
             "users": [
@@ -107,7 +134,34 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-2"
+      "tag": "proxy-3"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "134.122.94.36",
+            "port": 53480,
+            "users": [
+              {
+                "id": "f5c918d9-8534-45ed-8cb7-562c4a3f56c6",
+                "flow": "",
+                "encryption": "none",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "grpc",
+        "security": "none",
+        "grpcSettings": {
+          "serviceName": ""
+        }
+      },
+      "tag": "proxy-4"
     },
     {
       "protocol": "freedom",
