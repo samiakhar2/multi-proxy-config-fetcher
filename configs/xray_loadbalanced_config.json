@@ -60,11 +60,11 @@
       "settings": {
         "vnext": [
           {
-            "address": "145.239.29.74",
-            "port": 43961,
+            "address": "209.38.218.66",
+            "port": 45419,
             "users": [
               {
-                "id": "0d532992-867c-4d91-8c70-7344096c2ba5",
+                "id": "25f4b740-6994-4579-9b11-0ade2c836300",
                 "flow": "",
                 "encryption": "none",
                 "level": 8
@@ -87,11 +87,11 @@
       "settings": {
         "vnext": [
           {
-            "address": "209.38.168.122",
-            "port": 21251,
+            "address": "145.239.29.74",
+            "port": 43962,
             "users": [
               {
-                "id": "26d47bd6-801a-42ca-8c50-b59b182a0a9a",
+                "id": "3735d502-12ea-40a5-a59f-6b66413c20ad",
                 "flow": "",
                 "encryption": "none",
                 "level": 8
@@ -114,11 +114,11 @@
       "settings": {
         "vnext": [
           {
-            "address": "209.38.218.66",
-            "port": 45418,
+            "address": "143.244.197.90",
+            "port": 40189,
             "users": [
               {
-                "id": "357f5259-60dc-4caa-8852-52c99679dd19",
+                "id": "bdaeebd1-4eb6-4b63-8cfd-51ae39120f0e",
                 "flow": "",
                 "encryption": "none",
                 "level": 8
@@ -142,10 +142,10 @@
         "vnext": [
           {
             "address": "178.62.226.192",
-            "port": 32201,
+            "port": 32202,
             "users": [
               {
-                "id": "e0fe4f64-f7f7-430d-bff7-14a62b801070",
+                "id": "f3f5728d-7c73-4f0f-8b9c-455f6f9af11b",
                 "flow": "",
                 "encryption": "none",
                 "level": 8
@@ -162,33 +162,6 @@
         }
       },
       "tag": "proxy-4"
-    },
-    {
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
-            "address": "134.122.94.36",
-            "port": 53480,
-            "users": [
-              {
-                "id": "f5c918d9-8534-45ed-8cb7-562c4a3f56c6",
-                "flow": "",
-                "encryption": "none",
-                "level": 8
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "security": "none",
-        "grpcSettings": {
-          "serviceName": ""
-        }
-      },
-      "tag": "proxy-5"
     },
     {
       "protocol": "freedom",
