@@ -114,33 +114,6 @@
       "settings": {
         "vnext": [
           {
-            "address": "178.62.226.192",
-            "port": 32203,
-            "users": [
-              {
-                "id": "a3103ece-27ae-41c2-8dcb-8ae12c11d678",
-                "flow": "",
-                "encryption": "none",
-                "level": 8
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "security": "none",
-        "grpcSettings": {
-          "serviceName": ""
-        }
-      },
-      "tag": "proxy-3"
-    },
-    {
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
             "address": "143.244.197.90",
             "port": 40191,
             "users": [
@@ -161,7 +134,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-4"
+      "tag": "proxy-3"
     },
     {
       "protocol": "freedom",
