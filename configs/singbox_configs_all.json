@@ -102,8 +102,8 @@
             "tag": "🌐 Anonymous Multi",
             "outbounds": [
                 "👽 Best Ping 🚀",
-                "🇫🇷 1 - FR - VLESS/GRPC - 51928",
-                "🇬🇧 2 - GB - VLESS/GRPC - 25376",
+                "🇬🇧 1 - GB - VLESS/GRPC - 25377",
+                "🇫🇷 2 - FR - VLESS/GRPC - 51929",
                 "direct"
             ]
         },
@@ -115,8 +115,8 @@
             "type": "urltest",
             "tag": "👽 Best Ping 🚀",
             "outbounds": [
-                "🇫🇷 1 - FR - VLESS/GRPC - 51928",
-                "🇬🇧 2 - GB - VLESS/GRPC - 25376"
+                "🇬🇧 1 - GB - VLESS/GRPC - 25377",
+                "🇫🇷 2 - FR - VLESS/GRPC - 51929"
             ],
             "url": "https://www.gstatic.com/generate_204",
             "interrupt_exist_connections": false,
@@ -124,10 +124,10 @@
         },
         {
             "type": "vless",
-            "tag": "🇫🇷 1 - FR - VLESS/GRPC - 51928",
-            "server": "51.68.26.124",
-            "server_port": 51928,
-            "uuid": "163a4840-588f-4b66-8444-2c9f182325b2",
+            "tag": "🇬🇧 1 - GB - VLESS/GRPC - 25377",
+            "server": "198.244.141.25",
+            "server_port": 25377,
+            "uuid": "25971fff-18fa-4256-8a65-8b7f76d244b6",
             "flow": "",
             "tls": {
                 "enabled": false
@@ -139,10 +139,10 @@
         },
         {
             "type": "vless",
-            "tag": "🇬🇧 2 - GB - VLESS/GRPC - 25376",
-            "server": "198.244.141.25",
-            "server_port": 25376,
-            "uuid": "e80f946d-0f7e-4ee6-a9d5-d52516c9f672",
+            "tag": "🇫🇷 2 - FR - VLESS/GRPC - 51929",
+            "server": "51.68.26.124",
+            "server_port": 51929,
+            "uuid": "bc790516-19be-4323-b82e-40ecec31d938",
             "flow": "",
             "tls": {
                 "enabled": false
