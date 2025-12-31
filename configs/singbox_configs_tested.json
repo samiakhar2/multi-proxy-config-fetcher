@@ -102,8 +102,10 @@
             "tag": "🌐 Anonymous Multi",
             "outbounds": [
                 "👽 Best Ping 🚀",
-                "🇬🇧 1 - GB - VLESS/GRPC - 25377",
-                "🇫🇷 2 - FR - VLESS/GRPC - 51929",
+                "🇫🇷 1 - FR - VLESS/GRPC - 51930",
+                "🇬🇧 2 - GB - VLESS/GRPC - 25377",
+                "🇬🇧 3 - GB - VLESS/GRPC - 25378",
+                "🇫🇷 4 - FR - VLESS/GRPC - 51929",
                 "direct"
             ]
         },
@@ -115,8 +117,10 @@
             "type": "urltest",
             "tag": "👽 Best Ping 🚀",
             "outbounds": [
-                "🇬🇧 1 - GB - VLESS/GRPC - 25377",
-                "🇫🇷 2 - FR - VLESS/GRPC - 51929"
+                "🇫🇷 1 - FR - VLESS/GRPC - 51930",
+                "🇬🇧 2 - GB - VLESS/GRPC - 25377",
+                "🇬🇧 3 - GB - VLESS/GRPC - 25378",
+                "🇫🇷 4 - FR - VLESS/GRPC - 51929"
             ],
             "url": "https://www.gstatic.com/generate_204",
             "interrupt_exist_connections": false,
@@ -124,7 +128,22 @@
         },
         {
             "type": "vless",
-            "tag": "🇬🇧 1 - GB - VLESS/GRPC - 25377",
+            "tag": "🇫🇷 1 - FR - VLESS/GRPC - 51930",
+            "server": "51.68.26.124",
+            "server_port": 51930,
+            "uuid": "163b97f2-ef22-4ea1-ba25-2154d44365a8",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "grpc",
+                "service_name": ""
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇬🇧 2 - GB - VLESS/GRPC - 25377",
             "server": "198.244.141.25",
             "server_port": 25377,
             "uuid": "25971fff-18fa-4256-8a65-8b7f76d244b6",
@@ -139,7 +158,22 @@
         },
         {
             "type": "vless",
-            "tag": "🇫🇷 2 - FR - VLESS/GRPC - 51929",
+            "tag": "🇬🇧 3 - GB - VLESS/GRPC - 25378",
+            "server": "198.244.141.25",
+            "server_port": 25378,
+            "uuid": "66222cfb-3fe3-41d4-8e44-9a5edc53ce5d",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "grpc",
+                "service_name": ""
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇫🇷 4 - FR - VLESS/GRPC - 51929",
             "server": "51.68.26.124",
             "server_port": 51929,
             "uuid": "bc790516-19be-4323-b82e-40ecec31d938",
