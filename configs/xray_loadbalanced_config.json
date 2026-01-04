@@ -60,6 +60,33 @@
       "settings": {
         "vnext": [
           {
+            "address": "141.227.180.57",
+            "port": 443,
+            "users": [
+              {
+                "id": "180b7d0a-e675-444f-a5f5-82eee8c54084",
+                "flow": "",
+                "encryption": "none",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "grpc",
+        "security": "none",
+        "grpcSettings": {
+          "serviceName": ""
+        }
+      },
+      "tag": "proxy-1"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
             "address": "141.227.168.175",
             "port": 52748,
             "users": [
@@ -80,7 +107,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-1"
+      "tag": "proxy-2"
     },
     {
       "protocol": "vless",
@@ -107,7 +134,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-2"
+      "tag": "proxy-3"
     },
     {
       "protocol": "vless",
@@ -134,7 +161,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-3"
+      "tag": "proxy-4"
     },
     {
       "protocol": "vless",
@@ -161,7 +188,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-4"
+      "tag": "proxy-5"
     },
     {
       "protocol": "vless",
@@ -188,7 +215,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-5"
+      "tag": "proxy-6"
     },
     {
       "protocol": "vless",
@@ -215,7 +242,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-6"
+      "tag": "proxy-7"
     },
     {
       "protocol": "vless",
@@ -242,7 +269,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-7"
+      "tag": "proxy-8"
     },
     {
       "protocol": "vless",
@@ -269,7 +296,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-8"
+      "tag": "proxy-9"
     },
     {
       "protocol": "vless",
@@ -296,7 +323,7 @@
           "serviceName": ""
         }
       },
-      "tag": "proxy-9"
+      "tag": "proxy-10"
     },
     {
       "protocol": "vless",
@@ -317,14 +344,14 @@
         ]
       },
       "streamSettings": {
-        "network": "httpupgrade",
+        "network": "xhttp",
         "security": "none",
-        "httpupgradeSettings": {
+        "xhttpSettings": {
           "path": "/ZEDMODEON-ZEDMODEON-bia-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON",
           "host": "162.19.117.20"
         }
       },
-      "tag": "proxy-10"
+      "tag": "proxy-11"
     },
     {
       "protocol": "freedom",

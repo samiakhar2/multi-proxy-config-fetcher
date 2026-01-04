@@ -102,12 +102,48 @@
             "tag": "🌐 Anonymous Multi",
             "outbounds": [
                 "👽 Best Ping 🚀",
+                "🇫🇷 1 - FR - VLESS/GRPC - 443",
                 "direct"
             ]
         },
         {
             "type": "direct",
             "tag": "direct"
+        },
+        {
+            "type": "urltest",
+            "tag": "👽 Best Ping 🚀",
+            "outbounds": [
+                "🇫🇷 1 - FR - VLESS/GRPC - 443"
+            ],
+            "url": "https://www.gstatic.com/generate_204",
+            "interrupt_exist_connections": false,
+            "interval": "30s"
+        },
+        {
+            "type": "vless",
+            "tag": "🇫🇷 1 - FR - VLESS/GRPC - 443",
+            "server": "141.227.180.57",
+            "server_port": 443,
+            "uuid": "180b7d0a-e675-444f-a5f5-82eee8c54084",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "server_name": "141.227.180.57",
+                "insecure": false,
+                "alpn": [
+                    "h2",
+                    "http/1.1"
+                ],
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": ""
+                }
+            },
+            "transport": {
+                "type": "grpc",
+                "service_name": ""
+            }
         }
     ],
     "route": {
