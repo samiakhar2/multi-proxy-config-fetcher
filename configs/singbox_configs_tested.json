@@ -102,13 +102,7 @@
             "tag": "🌐 Anonymous Multi",
             "outbounds": [
                 "👽 Best Ping 🚀",
-                "🇫🇷 1 - FR - VLESS/GRPC - 22582",
-                "🇫🇷 2 - FR - VLESS/GRPC - 16533",
-                "🇬🇧 3 - GB - VLESS/GRPC - 56700",
-                "🇫🇷 5 - FR - VLESS/GRPC - 47270",
-                "🇵🇱 6 - PL - VLESS/GRPC - 21189",
-                "🇩🇪 7 - DE - VLESS/GRPC - 13359",
-                "🇫🇷 8 - FR - VLESS/XHTTP - 25314",
+                "🇸🇪 1 - SE - VLESS/XHTTP - 80",
                 "direct"
             ]
         },
@@ -120,13 +114,7 @@
             "type": "urltest",
             "tag": "👽 Best Ping 🚀",
             "outbounds": [
-                "🇫🇷 1 - FR - VLESS/GRPC - 22582",
-                "🇫🇷 2 - FR - VLESS/GRPC - 16533",
-                "🇬🇧 3 - GB - VLESS/GRPC - 56700",
-                "🇫🇷 5 - FR - VLESS/GRPC - 47270",
-                "🇵🇱 6 - PL - VLESS/GRPC - 21189",
-                "🇩🇪 7 - DE - VLESS/GRPC - 13359",
-                "🇫🇷 8 - FR - VLESS/XHTTP - 25314"
+                "🇸🇪 1 - SE - VLESS/XHTTP - 80"
             ],
             "url": "https://www.gstatic.com/generate_204",
             "interrupt_exist_connections": false,
@@ -134,100 +122,10 @@
         },
         {
             "type": "vless",
-            "tag": "🇫🇷 1 - FR - VLESS/GRPC - 22582",
-            "server": "57.131.19.1",
-            "server_port": 22582,
-            "uuid": "1deb7c86-86b8-4b0e-ba55-61af4775c67b",
-            "flow": "",
-            "tls": {
-                "enabled": false
-            },
-            "transport": {
-                "type": "grpc",
-                "service_name": ""
-            }
-        },
-        {
-            "type": "vless",
-            "tag": "🇫🇷 2 - FR - VLESS/GRPC - 16533",
-            "server": "57.130.46.9",
-            "server_port": 16533,
-            "uuid": "30dc6b35-78c6-42f8-b1a9-53095ac7d366",
-            "flow": "",
-            "tls": {
-                "enabled": false
-            },
-            "transport": {
-                "type": "grpc",
-                "service_name": ""
-            }
-        },
-        {
-            "type": "vless",
-            "tag": "🇬🇧 3 - GB - VLESS/GRPC - 56700",
-            "server": "51.89.228.63",
-            "server_port": 56700,
-            "uuid": "45c0281d-085c-4ef6-9f36-2563d322d27f",
-            "flow": "",
-            "tls": {
-                "enabled": false
-            },
-            "transport": {
-                "type": "grpc",
-                "service_name": ""
-            }
-        },
-        {
-            "type": "vless",
-            "tag": "🇫🇷 5 - FR - VLESS/GRPC - 47270",
-            "server": "141.227.140.106",
-            "server_port": 47270,
-            "uuid": "72f4411f-9872-48ab-9779-dbbce3a83f21",
-            "flow": "",
-            "tls": {
-                "enabled": false
-            },
-            "transport": {
-                "type": "grpc",
-                "service_name": ""
-            }
-        },
-        {
-            "type": "vless",
-            "tag": "🇵🇱 6 - PL - VLESS/GRPC - 21189",
-            "server": "51.83.254.73",
-            "server_port": 21189,
-            "uuid": "b384ce2d-1ee8-405d-b233-6df5035b1317",
-            "flow": "",
-            "tls": {
-                "enabled": false
-            },
-            "transport": {
-                "type": "grpc",
-                "service_name": ""
-            }
-        },
-        {
-            "type": "vless",
-            "tag": "🇩🇪 7 - DE - VLESS/GRPC - 13359",
-            "server": "54.36.114.57",
-            "server_port": 13359,
-            "uuid": "c6b48c93-b00c-43d1-87cb-cae9eb58d591",
-            "flow": "",
-            "tls": {
-                "enabled": false
-            },
-            "transport": {
-                "type": "grpc",
-                "service_name": ""
-            }
-        },
-        {
-            "type": "vless",
-            "tag": "🇫🇷 8 - FR - VLESS/XHTTP - 25314",
-            "server": "162.19.117.20",
-            "server_port": 25314,
-            "uuid": "fa68fd2e-b5e4-4586-9fd5-df18fe14da80",
+            "tag": "🇸🇪 1 - SE - VLESS/XHTTP - 80",
+            "server": "146.75.119.82",
+            "server_port": 80,
+            "uuid": "717ac927-535c-4d72-b811-89c0c19b9823",
             "flow": "",
             "tls": {
                 "enabled": false
@@ -235,9 +133,9 @@
             "transport": {
                 "type": "http",
                 "host": [
-                    "162.19.117.20"
+                    "Zedomode.global.ssl.fastly.net"
                 ],
-                "path": "/ZEDMODEON-ZEDMODEON-bia-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
             }
         }
     ],
