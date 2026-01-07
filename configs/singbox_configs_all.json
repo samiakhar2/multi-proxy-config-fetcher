@@ -103,6 +103,11 @@
             "outbounds": [
                 "👽 Best Ping 🚀",
                 "🇸🇪 1 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 2 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 3 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 4 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 5 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 6 - SE - VLESS/XHTTP - 80",
                 "direct"
             ]
         },
@@ -114,7 +119,12 @@
             "type": "urltest",
             "tag": "👽 Best Ping 🚀",
             "outbounds": [
-                "🇸🇪 1 - SE - VLESS/XHTTP - 80"
+                "🇸🇪 1 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 2 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 3 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 4 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 5 - SE - VLESS/XHTTP - 80",
+                "🇸🇪 6 - SE - VLESS/XHTTP - 80"
             ],
             "url": "https://www.gstatic.com/generate_204",
             "interrupt_exist_connections": false,
@@ -125,7 +135,7 @@
             "tag": "🇸🇪 1 - SE - VLESS/XHTTP - 80",
             "server": "146.75.119.82",
             "server_port": 80,
-            "uuid": "717ac927-535c-4d72-b811-89c0c19b9823",
+            "uuid": "03bd5d6c-a283-4c93-97ff-7a164cfd5a84",
             "flow": "",
             "tls": {
                 "enabled": false
@@ -135,7 +145,97 @@
                 "host": [
                     "Zedomode.global.ssl.fastly.net"
                 ],
-                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇪 2 - SE - VLESS/XHTTP - 80",
+            "server": "146.75.119.82",
+            "server_port": 80,
+            "uuid": "36f70a2d-cf04-4462-bfba-10d7a9a67fc4",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "http",
+                "host": [
+                    "Zedmodeonjon.global.ssl.fastly.net"
+                ],
+                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇪 3 - SE - VLESS/XHTTP - 80",
+            "server": "146.75.119.82",
+            "server_port": 80,
+            "uuid": "7fee5dc4-c486-4f2b-8bcf-6af076ab2f66",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "http",
+                "host": [
+                    "Zedmodeonjoni.global.ssl.fastly.net"
+                ],
+                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇪 4 - SE - VLESS/XHTTP - 80",
+            "server": "146.75.119.82",
+            "server_port": 80,
+            "uuid": "8bc2d742-c60a-44d2-bd12-b37f545bf263",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "http",
+                "host": [
+                    "Zedmodeonjon.global.ssl.fastly.net"
+                ],
+                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇪 5 - SE - VLESS/XHTTP - 80",
+            "server": "146.75.119.82",
+            "server_port": 80,
+            "uuid": "9223b9af-36d7-4d0d-9aa8-b139b94ec85f",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "http",
+                "host": [
+                    "Zedmodeontel.global.ssl.fastly.net"
+                ],
+                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇪 6 - SE - VLESS/XHTTP - 80",
+            "server": "146.75.119.82",
+            "server_port": 80,
+            "uuid": "d2453767-e809-4c3f-8857-40b9285ec692",
+            "flow": "",
+            "tls": {
+                "enabled": false
+            },
+            "transport": {
+                "type": "http",
+                "host": [
+                    "zedimodi.global.ssl.fastly.net"
+                ],
+                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
             }
         }
     ],
