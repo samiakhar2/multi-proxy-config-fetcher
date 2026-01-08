@@ -64,62 +64,6 @@
             "port": 80,
             "users": [
               {
-                "id": "03bd5d6c-a283-4c93-97ff-7a164cfd5a84",
-                "flow": "",
-                "encryption": "none",
-                "level": 8
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "xhttp",
-        "security": "none",
-        "xhttpSettings": {
-          "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON",
-          "host": "Zedomode.global.ssl.fastly.net"
-        }
-      },
-      "tag": "proxy-1"
-    },
-    {
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
-            "address": "146.75.119.82",
-            "port": 80,
-            "users": [
-              {
-                "id": "36f70a2d-cf04-4462-bfba-10d7a9a67fc4",
-                "flow": "",
-                "encryption": "none",
-                "level": 8
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "xhttp",
-        "security": "none",
-        "xhttpSettings": {
-          "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON",
-          "host": "Zedmodeonjon.global.ssl.fastly.net"
-        }
-      },
-      "tag": "proxy-2"
-    },
-    {
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
-            "address": "146.75.119.82",
-            "port": 80,
-            "users": [
-              {
                 "id": "7fee5dc4-c486-4f2b-8bcf-6af076ab2f66",
                 "flow": "",
                 "encryption": "none",
@@ -137,7 +81,7 @@
           "host": "Zedmodeonjoni.global.ssl.fastly.net"
         }
       },
-      "tag": "proxy-3"
+      "tag": "proxy-1"
     },
     {
       "protocol": "vless",
@@ -165,7 +109,7 @@
           "host": "Zedmodeonjon.global.ssl.fastly.net"
         }
       },
-      "tag": "proxy-4"
+      "tag": "proxy-2"
     },
     {
       "protocol": "vless",
@@ -193,7 +137,7 @@
           "host": "Zedmodeontel.global.ssl.fastly.net"
         }
       },
-      "tag": "proxy-5"
+      "tag": "proxy-3"
     },
     {
       "protocol": "vless",
@@ -221,7 +165,7 @@
           "host": "zedimodi.global.ssl.fastly.net"
         }
       },
-      "tag": "proxy-6"
+      "tag": "proxy-4"
     },
     {
       "protocol": "freedom",
