@@ -60,11 +60,11 @@
       "settings": {
         "vnext": [
           {
-            "address": "146.75.119.82",
-            "port": 80,
+            "address": "25.129.197.138",
+            "port": 2087,
             "users": [
               {
-                "id": "7fee5dc4-c486-4f2b-8bcf-6af076ab2f66",
+                "id": "2452c5b1-26b3-4265-a2d8-818f62685f97",
                 "flow": "",
                 "encryption": "none",
                 "level": 8
@@ -74,11 +74,22 @@
         ]
       },
       "streamSettings": {
-        "network": "xhttp",
-        "security": "none",
-        "xhttpSettings": {
-          "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON",
-          "host": "Zedmodeonjoni.global.ssl.fastly.net"
+        "network": "ws",
+        "security": "tls",
+        "wsSettings": {
+          "path": "/graphql",
+          "headers": {
+            "Host": "25.129.197.138"
+          }
+        },
+        "tlsSettings": {
+          "serverName": "cloudali.sudo-network.xyz",
+          "allowInsecure": false,
+          "fingerprint": "firefox",
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ]
         }
       },
       "tag": "proxy-1"
@@ -88,11 +99,11 @@
       "settings": {
         "vnext": [
           {
-            "address": "146.75.119.82",
-            "port": 80,
+            "address": "25.129.199.122",
+            "port": 2087,
             "users": [
               {
-                "id": "8bc2d742-c60a-44d2-bd12-b37f545bf263",
+                "id": "2452c5b1-26b3-4265-a2d8-818f62685f97",
                 "flow": "",
                 "encryption": "none",
                 "level": 8
@@ -102,11 +113,22 @@
         ]
       },
       "streamSettings": {
-        "network": "xhttp",
-        "security": "none",
-        "xhttpSettings": {
-          "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON",
-          "host": "Zedmodeonjon.global.ssl.fastly.net"
+        "network": "ws",
+        "security": "tls",
+        "wsSettings": {
+          "path": "/graphql",
+          "headers": {
+            "Host": "25.129.199.122"
+          }
+        },
+        "tlsSettings": {
+          "serverName": "cloudali.sudo-network.xyz",
+          "allowInsecure": false,
+          "fingerprint": "firefox",
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ]
         }
       },
       "tag": "proxy-2"
@@ -116,11 +138,11 @@
       "settings": {
         "vnext": [
           {
-            "address": "146.75.119.82",
-            "port": 80,
+            "address": "25.129.199.122",
+            "port": 2096,
             "users": [
               {
-                "id": "9223b9af-36d7-4d0d-9aa8-b139b94ec85f",
+                "id": "6d148903-4d7f-4e98-9f86-f0197201cf90",
                 "flow": "",
                 "encryption": "none",
                 "level": 8
@@ -130,11 +152,21 @@
         ]
       },
       "streamSettings": {
-        "network": "xhttp",
-        "security": "none",
-        "xhttpSettings": {
-          "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON",
-          "host": "Zedmodeontel.global.ssl.fastly.net"
+        "network": "ws",
+        "security": "tls",
+        "wsSettings": {
+          "path": "/starlink_elon_musk",
+          "headers": {
+            "Host": "mmdshahin.dpdns.org"
+          }
+        },
+        "tlsSettings": {
+          "serverName": "mmdshahin.dpdns.org",
+          "allowInsecure": false,
+          "fingerprint": "chrome",
+          "alpn": [
+            "http/1.1"
+          ]
         }
       },
       "tag": "proxy-3"
@@ -144,11 +176,11 @@
       "settings": {
         "vnext": [
           {
-            "address": "146.75.119.82",
-            "port": 80,
+            "address": "25.129.197.138",
+            "port": 2053,
             "users": [
               {
-                "id": "d2453767-e809-4c3f-8857-40b9285ec692",
+                "id": "8a07740f-b932-4372-a3a2-ed91f184cd33",
                 "flow": "",
                 "encryption": "none",
                 "level": 8
@@ -158,14 +190,55 @@
         ]
       },
       "streamSettings": {
-        "network": "xhttp",
-        "security": "none",
-        "xhttpSettings": {
-          "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON",
-          "host": "zedimodi.global.ssl.fastly.net"
+        "network": "ws",
+        "security": "tls",
+        "wsSettings": {
+          "path": "/eyJqdW5rIjoiNDBNWGY3Z0NPd0loZ2YiLCJwcm90b2NvbCI6InZsIiwibW9kZSI6InByb3h5aXAiLCJwYW5lbElQcyI6W119?ed=2560",
+          "headers": {
+            "Host": "khamenei.dpdns.org"
+          }
+        },
+        "tlsSettings": {
+          "serverName": "KhAmeneI.DPdNs.OrG",
+          "allowInsecure": false,
+          "fingerprint": "chrome",
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ]
         }
       },
       "tag": "proxy-4"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "25.129.199.0",
+            "port": 2052,
+            "users": [
+              {
+                "id": "a66f90d8-cfc8-4eef-ad19-378aeede1d9b",
+                "flow": "",
+                "encryption": "none",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "none",
+        "wsSettings": {
+          "path": "/?ed=2048",
+          "headers": {
+            "Host": "FINLAND.SODOGODPING.IR"
+          }
+        }
+      },
+      "tag": "proxy-5"
     },
     {
       "protocol": "freedom",

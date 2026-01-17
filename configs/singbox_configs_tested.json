@@ -102,10 +102,11 @@
             "tag": "🌐 Anonymous Multi",
             "outbounds": [
                 "👽 Best Ping 🚀",
-                "🇸🇪 1 - SE - VLESS/XHTTP - 80",
-                "🇸🇪 2 - SE - VLESS/XHTTP - 80",
-                "🇸🇪 3 - SE - VLESS/XHTTP - 80",
-                "🇸🇪 4 - SE - VLESS/XHTTP - 80",
+                "🇬🇧 1 - GB - VLESS/WS/TLS/UTLS - 2087",
+                "🇬🇧 2 - GB - VLESS/WS/TLS/UTLS - 2087",
+                "🇬🇧 3 - GB - VLESS/WS/TLS/UTLS - 2096",
+                "🇬🇧 4 - GB - VLESS/WS/TLS/UTLS - 2053",
+                "🇬🇧 5 - GB - VLESS/WS - 2052",
                 "direct"
             ]
         },
@@ -117,10 +118,11 @@
             "type": "urltest",
             "tag": "👽 Best Ping 🚀",
             "outbounds": [
-                "🇸🇪 1 - SE - VLESS/XHTTP - 80",
-                "🇸🇪 2 - SE - VLESS/XHTTP - 80",
-                "🇸🇪 3 - SE - VLESS/XHTTP - 80",
-                "🇸🇪 4 - SE - VLESS/XHTTP - 80"
+                "🇬🇧 1 - GB - VLESS/WS/TLS/UTLS - 2087",
+                "🇬🇧 2 - GB - VLESS/WS/TLS/UTLS - 2087",
+                "🇬🇧 3 - GB - VLESS/WS/TLS/UTLS - 2096",
+                "🇬🇧 4 - GB - VLESS/WS/TLS/UTLS - 2053",
+                "🇬🇧 5 - GB - VLESS/WS - 2052"
             ],
             "url": "https://www.gstatic.com/generate_204",
             "interrupt_exist_connections": false,
@@ -128,74 +130,131 @@
         },
         {
             "type": "vless",
-            "tag": "🇸🇪 1 - SE - VLESS/XHTTP - 80",
-            "server": "146.75.119.82",
-            "server_port": 80,
-            "uuid": "7fee5dc4-c486-4f2b-8bcf-6af076ab2f66",
+            "tag": "🇬🇧 1 - GB - VLESS/WS/TLS/UTLS - 2087",
+            "server": "25.129.197.138",
+            "server_port": 2087,
+            "uuid": "2452c5b1-26b3-4265-a2d8-818f62685f97",
             "flow": "",
             "tls": {
-                "enabled": false
+                "enabled": true,
+                "server_name": "cloudali.sudo-network.xyz",
+                "insecure": false,
+                "alpn": [
+                    "h2",
+                    "http/1.1"
+                ],
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "firefox"
+                }
             },
             "transport": {
-                "type": "http",
-                "host": [
-                    "Zedmodeonjoni.global.ssl.fastly.net"
-                ],
-                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+                "type": "ws",
+                "path": "/graphql",
+                "headers": {
+                    "Host": "25.129.197.138"
+                }
             }
         },
         {
             "type": "vless",
-            "tag": "🇸🇪 2 - SE - VLESS/XHTTP - 80",
-            "server": "146.75.119.82",
-            "server_port": 80,
-            "uuid": "8bc2d742-c60a-44d2-bd12-b37f545bf263",
+            "tag": "🇬🇧 2 - GB - VLESS/WS/TLS/UTLS - 2087",
+            "server": "25.129.199.122",
+            "server_port": 2087,
+            "uuid": "2452c5b1-26b3-4265-a2d8-818f62685f97",
             "flow": "",
             "tls": {
-                "enabled": false
+                "enabled": true,
+                "server_name": "cloudali.sudo-network.xyz",
+                "insecure": false,
+                "alpn": [
+                    "h2",
+                    "http/1.1"
+                ],
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "firefox"
+                }
             },
             "transport": {
-                "type": "http",
-                "host": [
-                    "Zedmodeonjon.global.ssl.fastly.net"
-                ],
-                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+                "type": "ws",
+                "path": "/graphql",
+                "headers": {
+                    "Host": "25.129.199.122"
+                }
             }
         },
         {
             "type": "vless",
-            "tag": "🇸🇪 3 - SE - VLESS/XHTTP - 80",
-            "server": "146.75.119.82",
-            "server_port": 80,
-            "uuid": "9223b9af-36d7-4d0d-9aa8-b139b94ec85f",
+            "tag": "🇬🇧 3 - GB - VLESS/WS/TLS/UTLS - 2096",
+            "server": "25.129.199.122",
+            "server_port": 2096,
+            "uuid": "6d148903-4d7f-4e98-9f86-f0197201cf90",
             "flow": "",
             "tls": {
-                "enabled": false
+                "enabled": true,
+                "server_name": "mmdshahin.dpdns.org",
+                "insecure": false,
+                "alpn": [
+                    "http/1.1"
+                ],
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
             },
             "transport": {
-                "type": "http",
-                "host": [
-                    "Zedmodeontel.global.ssl.fastly.net"
-                ],
-                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+                "type": "ws",
+                "path": "/starlink_elon_musk",
+                "headers": {
+                    "Host": "mmdshahin.dpdns.org"
+                }
             }
         },
         {
             "type": "vless",
-            "tag": "🇸🇪 4 - SE - VLESS/XHTTP - 80",
-            "server": "146.75.119.82",
-            "server_port": 80,
-            "uuid": "d2453767-e809-4c3f-8857-40b9285ec692",
+            "tag": "🇬🇧 4 - GB - VLESS/WS/TLS/UTLS - 2053",
+            "server": "25.129.197.138",
+            "server_port": 2053,
+            "uuid": "8a07740f-b932-4372-a3a2-ed91f184cd33",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "server_name": "KhAmeneI.DPdNs.OrG",
+                "insecure": false,
+                "alpn": [
+                    "h2",
+                    "http/1.1"
+                ],
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/eyJqdW5rIjoiNDBNWGY3Z0NPd0loZ2YiLCJwcm90b2NvbCI6InZsIiwibW9kZSI6InByb3h5aXAiLCJwYW5lbElQcyI6W119?ed=2560",
+                "headers": {
+                    "Host": "khamenei.dpdns.org"
+                }
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇬🇧 5 - GB - VLESS/WS - 2052",
+            "server": "25.129.199.0",
+            "server_port": 2052,
+            "uuid": "a66f90d8-cfc8-4eef-ad19-378aeede1d9b",
             "flow": "",
             "tls": {
                 "enabled": false
             },
             "transport": {
-                "type": "http",
-                "host": [
-                    "zedimodi.global.ssl.fastly.net"
-                ],
-                "path": "/ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON-ZEDMODEON"
+                "type": "ws",
+                "path": "/?ed=2048",
+                "headers": {
+                    "Host": "FINLAND.SODOGODPING.IR"
+                }
             }
         }
     ],
